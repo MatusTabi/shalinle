@@ -75,18 +75,16 @@ export function TramMap({ gameState }: TramMapProps) {
             .attr("cx", 0)
             .attr("cy", 0)
             .attr("r", 5)
-            .attr("fill", (stop) => (isEndpoint(gameState, stop.id) ? "#4ae176" : "#8ed5ff"));
+            .attr("fill", "#ffffff")
+            .attr("stroke", "#0b1326")
+            .attr("stroke-width", 2);
 
         stopGroups
             .append("text")
-            .attr("x", 18)
-            .attr("y", -16)
+            .attr("x", 8)
+            .attr("y", -18)
             .attr("fill", "#dae2fd")
-            .attr("font-size", 16)
-            .attr("font-weight", (stop) => (isEndpoint(gameState, stop.id) ? 800 : 650))
-            .attr("paint-order", "stroke")
-            .attr("stroke", "#0b1326")
-            .attr("stroke-width", 6)
+            .attr("font-size", 9)
             .attr("transform", "rotate(-45 18 -18)")
             .text((stop) => stop.name);
 
