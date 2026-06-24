@@ -13,7 +13,7 @@ export const initialTramNetwork: TramNetwork = {
         { id: "pionyrska", name: "Pionýrská", x: 560, y: 300 },
         { id: "antoninska", name: "Antonínská", x: 640, y: 300 },
         { id: "moravske_namesti", name: "Moravské náměstí", x: 720, y: 300 },
-        { id: "malinovskeho_namesti", name: "Malinovského náměstí", x: 820, y: 340 },
+        { id: "malinovskeho_namesti", name: "Malinovského náměstí", x: 820, y: 280 },
         { id: "hlavni_nadrazi", name: "Hlavní nádraží", x: 900, y: 320 },
         { id: "nove_sady", name: "Nové Sady", x: 900, y: 360 },
 
