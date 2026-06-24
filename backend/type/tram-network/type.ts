@@ -7,6 +7,7 @@ export type Stop = {
 
 export type Connection = {
     id: string;
+    lineId: string;
     fromStopId: string;
     toStopId: string;
     color: string;
@@ -24,6 +25,8 @@ export type GuessStatus = "correct-neighbor" | "isolated" | "gray-connected" | "
 export type VisibleConnectionKind = "correct" | "gray";
 
 export type VisibleConnection = {
+    id: string;
+    lineId: string;
     fromStopId: string;
     toStopId: string;
     color: string;

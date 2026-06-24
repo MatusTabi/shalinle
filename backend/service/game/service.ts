@@ -122,6 +122,8 @@ export class GameService {
         kind: VisibleConnection["kind"],
     ): VisibleConnection[] {
         return connections.map((connection) => ({
+            id: connection.id,
+            lineId: connection.lineId,
             fromStopId: guessedStopId,
             toStopId: this.getOtherStopId(connection, guessedStopId),
             color: kind === "correct" ? connection.color : "#9ca3af",
@@ -137,7 +139,7 @@ export class GameService {
         const byKey = new Map<string, VisibleConnection>();
 
         for (const connection of connections) {
-            const key = [connection.fromStopId, connection.toStopId].sort().join(":");
+            const key = connection.id;
             const existingConnection = byKey.get(key);
 
             if (!existingConnection || connection.kind === "correct") {

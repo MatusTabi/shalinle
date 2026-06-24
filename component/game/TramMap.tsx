@@ -11,10 +11,23 @@ type TramMapProps = {
 
 const mapWidth = 790;
 const mapHeight = 520;
+const routeStrokeWidth = 6;
+const laneGap = 9;
+const stopRectWidth = 18;
+
+type VisibleEdge = GameStateDto["visibleEdges"][number];
+
+type RouteEdge = VisibleEdge & {
+    laneIndex: number;
+    laneCount: number;
+};
+
+type StopShape = StopDto & {
+    lineCount: number;
+};
 
 export function TramMap({ gameState }: TramMapProps) {
     const svgRef = useRef<SVGSVGElement | null>(null);
-    const contentRef = useRef<SVGGElement | null>(null);
     const zoomTransformRef = useRef<d3.ZoomTransform>(d3.zoomIdentity);
 
     useEffect(() => {
@@ -48,27 +61,45 @@ export function TramMap({ gameState }: TramMapProps) {
         svg.append("rect").attr("width", mapWidth).attr("height", mapHeight).attr("fill", "#0b1326");
 
         const content = svg.append("g").attr("class", "map-content");
-        contentRef.current = content.node();
 
         const stopById = new Map(gameState.visibleStops.map((stop) => [stop.id, stop]));
+        const routeEdges = getRouteEdges(gameState.visibleEdges);
+        const stopLineCountById = getUniqueStopLineCountById(gameState.visibleEdges);
+        const stopShapes: StopShape[] = gameState.visibleStops.map((stop) => ({
+            ...stop,
+            lineCount: stopLineCountById.get(stop.id) ?? 0,
+        }));
 
         content
             .append("g")
             .attr("fill", "none")
-            .selectAll("line.route")
-            .data(gameState.visibleEdges)
+            .selectAll<SVGLineElement, RouteEdge>("line.route")
+            .data(routeEdges)
             .join("line")
             .attr("class", "route")
             .attr("stroke", (edge) => edge.color)
             .attr("stroke-dasharray", (edge) => (edge.kind === "gray" ? "10 10" : null))
-            .attr("stroke-width", 6);
+            .attr("stroke-width", routeStrokeWidth);
 
         const stopGroups = content
             .append("g")
-            .selectAll<SVGGElement, StopDto>("g.stop")
-            .data(gameState.visibleStops, (stop) => stop.id)
+            .selectAll<SVGGElement, StopShape>("g.stop")
+            .data(stopShapes)
             .join("g")
             .attr("class", "stop");
+
+        stopGroups
+            .append("rect")
+            .attr("x", (stop) => -getStopRectSize(stop.lineCount).width / 2)
+            .attr("y", (stop) => -getStopRectSize(stop.lineCount).height / 2)
+            .attr("width", (stop) => getStopRectSize(stop.lineCount).width)
+            .attr("height", (stop) => getStopRectSize(stop.lineCount).height)
+            .attr("rx", 5)
+            .attr("ry", 5)
+            .attr("fill", "#ffffff")
+            .attr("stroke", "#0b1326")
+            .attr("stroke-width", 2)
+            .attr("display", (stop) => (stop.lineCount > 1 ? null : "none"));
 
         stopGroups
             .append("circle")
@@ -77,7 +108,8 @@ export function TramMap({ gameState }: TramMapProps) {
             .attr("r", 5)
             .attr("fill", "#ffffff")
             .attr("stroke", "#0b1326")
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 2)
+            .attr("display", (stop) => (stop.lineCount > 1 ? "none" : null));
 
         stopGroups
             .append("text")
@@ -90,16 +122,16 @@ export function TramMap({ gameState }: TramMapProps) {
 
         function applyTransform(transform: d3.ZoomTransform) {
             content
-                .selectAll<SVGLineElement, GameStateDto["visibleEdges"][number]>("line.route")
-                .attr("x1", (edge) => transform.applyX(stopById.get(edge.fromStopId)?.x ?? 0))
-                .attr("y1", (edge) => transform.applyY(stopById.get(edge.fromStopId)?.y ?? 0))
-                .attr("x2", (edge) => transform.applyX(stopById.get(edge.toStopId)?.x ?? 0))
-                .attr("y2", (edge) => transform.applyY(stopById.get(edge.toStopId)?.y ?? 0))
-                .attr("stroke-width", 6)
+                .selectAll<SVGLineElement, RouteEdge>("line.route")
+                .attr("x1", (edge) => getRouteCoordinates(edge, stopById, transform).x1)
+                .attr("y1", (edge) => getRouteCoordinates(edge, stopById, transform).y1)
+                .attr("x2", (edge) => getRouteCoordinates(edge, stopById, transform).x2)
+                .attr("y2", (edge) => getRouteCoordinates(edge, stopById, transform).y2)
+                .attr("stroke-width", routeStrokeWidth)
                 .attr("stroke-dasharray", (edge) => (edge.kind === "gray" ? "10 10" : null));
 
             content
-                .selectAll<SVGGElement, StopDto>("g.stop")
+                .selectAll<SVGGElement, StopShape>("g.stop")
                 .attr("transform", (stop) => `translate(${transform.applyX(stop.x)}, ${transform.applyY(stop.y)})`);
         }
 
@@ -131,4 +163,84 @@ export function TramMap({ gameState }: TramMapProps) {
             role="img"
         />
     );
+}
+
+function getRouteEdges(edges: VisibleEdge[]): RouteEdge[] {
+    const edgesByStopPair = new Map<string, VisibleEdge[]>();
+
+    for (const edge of edges) {
+        const key = getStopPairKey(edge.fromStopId, edge.toStopId);
+        edgesByStopPair.set(key, [...(edgesByStopPair.get(key) ?? []), edge]);
+    }
+
+    return edges.map((edge) => {
+        const sharedEdges = edgesByStopPair.get(getStopPairKey(edge.fromStopId, edge.toStopId)) ?? [edge];
+
+        return {
+            ...edge,
+            laneIndex: sharedEdges.findIndex((sharedEdge) => sharedEdge.id === edge.id),
+            laneCount: sharedEdges.length,
+        };
+    });
+}
+
+function getStopPairKey(firstStopId: string, secondStopId: string) {
+    return [firstStopId, secondStopId].sort().join(":");
+}
+
+function getUniqueStopLineCountById(edges: VisibleEdge[]) {
+    const lineIdsByStopId = new Map<string, Set<string>>();
+
+    for (const edge of edges) {
+        const fromStopLineIds = lineIdsByStopId.get(edge.fromStopId) ?? new Set<string>();
+        const toStopLineIds = lineIdsByStopId.get(edge.toStopId) ?? new Set<string>();
+
+        fromStopLineIds.add(edge.lineId);
+        toStopLineIds.add(edge.lineId);
+        lineIdsByStopId.set(edge.fromStopId, fromStopLineIds);
+        lineIdsByStopId.set(edge.toStopId, toStopLineIds);
+    }
+
+    return new Map(Array.from(lineIdsByStopId.entries()).map(([stopId, lineIds]) => [stopId, lineIds.size]));
+}
+
+function getStopRectSize(lineCount: number) {
+    const height = Math.max(14, lineCount * laneGap + 6);
+
+    return {
+        width: stopRectWidth,
+        height,
+    };
+}
+
+function getRouteCoordinates(edge: RouteEdge, stopById: Map<string, StopDto>, transform: d3.ZoomTransform) {
+    const fromStop = stopById.get(edge.fromStopId);
+    const toStop = stopById.get(edge.toStopId);
+
+    if (!fromStop || !toStop) {
+        return { x1: 0, y1: 0, x2: 0, y2: 0 };
+    }
+
+    const x1 = transform.applyX(fromStop.x);
+    const y1 = transform.applyY(fromStop.y);
+    const x2 = transform.applyX(toStop.x);
+    const y2 = transform.applyY(toStop.y);
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const length = Math.hypot(dx, dy);
+
+    if (length === 0 || edge.laneCount === 1) {
+        return { x1, y1, x2, y2 };
+    }
+
+    const offset = (edge.laneIndex - (edge.laneCount - 1) / 2) * laneGap;
+    const offsetX = (-dy / length) * offset;
+    const offsetY = (dx / length) * offset;
+
+    return {
+        x1: x1 + offsetX,
+        y1: y1 + offsetY,
+        x2: x2 + offsetX,
+        y2: y2 + offsetY,
+    };
 }
