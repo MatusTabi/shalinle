@@ -132,7 +132,3 @@ export function TramMap({ gameState }: TramMapProps) {
         />
     );
 }
-
-function isEndpoint(gameState: GameStateDto, stopId: string) {
-    return stopId === gameState.startStop.id || stopId === gameState.terminalStop.id;
-}
