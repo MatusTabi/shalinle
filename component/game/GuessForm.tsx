@@ -2,7 +2,7 @@
 
 import { Button } from "@/component/ui/Button";
 import { Input } from "@/component/ui/Input";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type GuessFormProps = {
     availableStopNames: string[];
@@ -12,6 +12,13 @@ type GuessFormProps = {
 
 export function GuessForm({ availableStopNames, disabled, onGuess }: GuessFormProps) {
     const [stopName, setStopName] = useState("");
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
+    useEffect(() => {
+        if (!disabled) {
+            inputRef.current?.focus();
+        }
+    }, [disabled]);
 
     return (
         <form
@@ -25,17 +32,25 @@ export function GuessForm({ availableStopNames, disabled, onGuess }: GuessFormPr
 
                 onGuess(stopName);
                 setStopName("");
+                window.setTimeout(() => inputRef.current?.focus(), 0);
             }}
         >
             <div className="min-w-0 flex-1">
                 <Input
+                    ref={inputRef}
                     aria-label="Guess a tram stop"
                     autoComplete="off"
+                    autoFocus
                     disabled={disabled}
                     list="stop-names"
                     placeholder="Guess a stop"
                     value={stopName}
                     onChange={(event) => setStopName(event.target.value)}
+                    onBlur={() => {
+                        if (!disabled) {
+                            window.setTimeout(() => inputRef.current?.focus(), 0);
+                        }
+                    }}
                 />
                 <datalist id="stop-names">
                     {availableStopNames.map((name) => (
