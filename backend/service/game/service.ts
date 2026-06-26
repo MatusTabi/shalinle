@@ -169,7 +169,7 @@ export class GameService {
                     lineId: connection.lineId,
                     fromStopId: connection.fromStopId,
                     toStopId: connection.toStopId,
-                    color: connection.color,
+                    color: kind === "correct" ? connection.color : "#808080",
                     kind,
                 };
             });
