@@ -58,17 +58,18 @@ export class GameService {
         );
 
         if (correctNeighborConnections.length > 0) {
-            const visibleConnections = [
-                ...existingState.visibleConnections,
-                ...this.toVisibleConnections(guessedStop.id, correctNeighborConnections, "correct"),
-            ];
+            const visibleStopIds = [...existingState.visibleStopIds, guessedStop.id];
+            const correctStopIds = this.getReachableCorrectStopIds(visibleStopIds, [
+                ...existingState.correctStopIds,
+                guessedStop.id,
+            ]);
 
             return this.saveGuess(
                 {
                     ...existingState,
-                    visibleStopIds: [...existingState.visibleStopIds, guessedStop.id],
-                    correctStopIds: [...existingState.correctStopIds, guessedStop.id],
-                    visibleConnections: this.dedupeVisibleConnections(visibleConnections),
+                    visibleStopIds,
+                    correctStopIds,
+                    visibleConnections: this.getVisibleConnections(visibleStopIds, correctStopIds),
                 },
                 {
                     stopName: guessedStop.name,
@@ -79,16 +80,13 @@ export class GameService {
         }
 
         if (visibleNeighborConnections.length > 0) {
-            const visibleConnections = [
-                ...existingState.visibleConnections,
-                ...this.toVisibleConnections(guessedStop.id, visibleNeighborConnections, "gray"),
-            ];
+            const visibleStopIds = [...existingState.visibleStopIds, guessedStop.id];
 
             return this.saveGuess(
                 {
                     ...existingState,
-                    visibleStopIds: [...existingState.visibleStopIds, guessedStop.id],
-                    visibleConnections: this.dedupeVisibleConnections(visibleConnections),
+                    visibleStopIds,
+                    visibleConnections: this.getVisibleConnections(visibleStopIds, existingState.correctStopIds),
                 },
                 {
                     stopName: guessedStop.name,
@@ -98,10 +96,13 @@ export class GameService {
             );
         }
 
+        const visibleStopIds = [...existingState.visibleStopIds, guessedStop.id];
+
         return this.saveGuess(
             {
                 ...existingState,
-                visibleStopIds: [...existingState.visibleStopIds, guessedStop.id],
+                visibleStopIds,
+                visibleConnections: this.getVisibleConnections(visibleStopIds, existingState.correctStopIds),
             },
             {
                 stopName: guessedStop.name,
@@ -116,38 +117,62 @@ export class GameService {
         return this.toDto(savedState);
     }
 
-    private toVisibleConnections(
-        guessedStopId: string,
-        connections: Connection[],
-        kind: VisibleConnection["kind"],
-    ): VisibleConnection[] {
-        return connections.map((connection) => ({
-            id: connection.id,
-            lineId: connection.lineId,
-            fromStopId: guessedStopId,
-            toStopId: this.getOtherStopId(connection, guessedStopId),
-            color: kind === "correct" ? connection.color : "#9ca3af",
-            kind,
-        }));
-    }
-
     private getOtherStopId(connection: Connection, stopId: string): string {
         return connection.fromStopId === stopId ? connection.toStopId : connection.fromStopId;
     }
 
-    private dedupeVisibleConnections(connections: VisibleConnection[]): VisibleConnection[] {
-        const byKey = new Map<string, VisibleConnection>();
+    private getReachableCorrectStopIds(visibleStopIds: string[], seedCorrectStopIds: string[]): string[] {
+        const visibleStopIdSet = new Set(visibleStopIds);
+        const reachableStopIdSet = new Set(seedCorrectStopIds.filter((stopId) => visibleStopIdSet.has(stopId)));
+        const queue = Array.from(reachableStopIdSet);
 
-        for (const connection of connections) {
-            const key = connection.id;
-            const existingConnection = byKey.get(key);
+        while (queue.length > 0) {
+            const stopId = queue.shift();
 
-            if (!existingConnection || connection.kind === "correct") {
-                byKey.set(key, connection);
+            if (!stopId) {
+                continue;
+            }
+
+            for (const connection of this.stopRepository.findConnectionsForStop(stopId)) {
+                const neighborStopId = this.getOtherStopId(connection, stopId);
+
+                if (!visibleStopIdSet.has(neighborStopId) || reachableStopIdSet.has(neighborStopId)) {
+                    continue;
+                }
+
+                reachableStopIdSet.add(neighborStopId);
+                queue.push(neighborStopId);
             }
         }
 
-        return Array.from(byKey.values());
+        return Array.from(reachableStopIdSet);
+    }
+
+    private getVisibleConnections(visibleStopIds: string[], correctStopIds: string[]): VisibleConnection[] {
+        const visibleStopIdSet = new Set(visibleStopIds);
+        const correctStopIdSet = new Set(correctStopIds);
+
+        return this.stopRepository
+            .findAllConnections()
+            .filter(
+                (connection) =>
+                    visibleStopIdSet.has(connection.fromStopId) && visibleStopIdSet.has(connection.toStopId),
+            )
+            .map((connection) => {
+                const kind: VisibleConnection["kind"] =
+                    correctStopIdSet.has(connection.fromStopId) && correctStopIdSet.has(connection.toStopId)
+                        ? "correct"
+                        : "gray";
+
+                return {
+                    id: connection.id,
+                    lineId: connection.lineId,
+                    fromStopId: connection.fromStopId,
+                    toStopId: connection.toStopId,
+                    color: connection.color,
+                    kind,
+                };
+            });
     }
 
     private toDto(state: GameState): GameStateDto {
