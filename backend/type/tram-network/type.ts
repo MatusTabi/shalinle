@@ -1,21 +1,21 @@
 export type Stop = {
-    id: string;
+    id: number;
     name: string;
     x: number;
     y: number;
 };
 
 export type Connection = {
-    id: string;
-    lineId: string;
-    fromStopId: string;
-    toStopId: string;
+    id: number;
+    lineId: number;
+    fromStopId: number;
+    toStopId: number;
     color: string;
 };
 
 export type TramNetwork = {
-    startStopId: string;
-    terminalStopId: string;
+    startStopId: number;
+    terminalStopId: number;
     stops: Stop[];
     connections: Connection[];
 };
