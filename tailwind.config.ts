@@ -8,6 +8,10 @@ const config: Config = {
                 sans: ["var(--font-inter)", "Inter", "Arial", "sans-serif"],
             },
             colors: {
+                border: "var(--outline-variant)",
+                input: "var(--outline-variant)",
+                ring: "var(--primary)",
+                foreground: "var(--on-background)",
                 surface: {
                     DEFAULT: "var(--surface)",
                     dim: "var(--surface-dim)",
@@ -22,15 +26,29 @@ const config: Config = {
                 background: "var(--background)",
                 primary: {
                     DEFAULT: "var(--primary)",
+                    foreground: "var(--on-primary)",
                     container: "var(--primary-container)",
                     fixed: "var(--primary-fixed)",
                     "fixed-dim": "var(--primary-fixed-dim)",
                 },
                 secondary: {
                     DEFAULT: "var(--secondary)",
+                    foreground: "var(--on-secondary)",
                     container: "var(--secondary-container)",
                     fixed: "var(--secondary-fixed)",
                     "fixed-dim": "var(--secondary-fixed-dim)",
+                },
+                destructive: {
+                    DEFAULT: "var(--error-container)",
+                    foreground: "var(--on-error-container)",
+                },
+                muted: {
+                    DEFAULT: "var(--surface-container-high)",
+                    foreground: "var(--on-surface-variant)",
+                },
+                accent: {
+                    DEFAULT: "var(--surface-container-high)",
+                    foreground: "var(--on-surface)",
                 },
                 tertiary: {
                     DEFAULT: "var(--tertiary)",
