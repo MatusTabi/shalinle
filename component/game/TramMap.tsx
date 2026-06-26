@@ -42,7 +42,6 @@ export function TramMap({ gameState }: TramMapProps) {
 
         const zoom = d3
             .zoom<SVGSVGElement, unknown>()
-            .scaleExtent([0.6, 5])
             .translateExtent([
                 [-MAP_WIDTH * 1.5, -MAP_HEIGHT * 1.5],
                 [MAP_WIDTH * 2.5, MAP_HEIGHT * 2.5],
