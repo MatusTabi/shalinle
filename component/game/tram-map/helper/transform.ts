@@ -16,8 +16,7 @@ export function applyMapTransform({ content, stopById, transform }: ApplyMapTran
         .attr("y1", (edge) => getRouteCoordinates(edge, stopById, transform).y1)
         .attr("x2", (edge) => getRouteCoordinates(edge, stopById, transform).x2)
         .attr("y2", (edge) => getRouteCoordinates(edge, stopById, transform).y2)
-        .attr("stroke-width", ROUTE_STROKE_WIDTH)
-        .attr("stroke-dasharray", (edge) => (edge.kind === "gray" ? "10 10" : null));
+        .attr("stroke-width", ROUTE_STROKE_WIDTH);
 
     content
         .selectAll<SVGGElement, StopShape>("g.stop")

@@ -11,6 +11,5 @@ export function drawRoutes(content: d3.Selection<SVGGElement, unknown, null, und
         .join("line")
         .attr("class", "route")
         .attr("stroke", (edge) => edge.color)
-        .attr("stroke-dasharray", (edge) => (edge.kind === "gray" ? "10 10" : null))
         .attr("stroke-width", ROUTE_STROKE_WIDTH);
 }
