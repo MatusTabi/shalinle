@@ -1,5 +1,5 @@
 export type StopDto = {
-    id: string;
+    id: number;
     name: string;
     x: number;
     y: number;
