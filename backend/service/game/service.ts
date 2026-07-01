@@ -11,10 +11,11 @@ export class GameService {
     ) {}
 
     startGame(): GameStateDto {
-        const startStopId = this.stopRepository.getStartStopId();
-        const terminalStopId = this.stopRepository.getTerminalStopId();
+        const { startStopId, terminalStopId } = this.getRandomEndpointPair();
         const state = this.gameRepository.create({
             id: crypto.randomUUID(),
+            startStopId,
+            terminalStopId,
             visibleStopIds: [startStopId, terminalStopId],
             correctStopIds: [startStopId, terminalStopId],
             visibleConnections: [],
@@ -121,6 +122,84 @@ export class GameService {
         return this.toDto(savedState);
     }
 
+    private getRandomEndpointPair(): { startStopId: string; terminalStopId: string } {
+        const shuffledStops = this.shuffle(this.stopRepository.findAll());
+
+        for (const stop of shuffledStops) {
+            const terminalStopIds = this.getStopIdsByDistanceRange(stop.id, 5, 13);
+
+            if (terminalStopIds.length > 0) {
+                return {
+                    startStopId: stop.id,
+                    terminalStopId: terminalStopIds[Math.floor(Math.random() * terminalStopIds.length)],
+                };
+            }
+        }
+
+        return this.getFallbackEndpointPair();
+    }
+
+    private getFallbackEndpointPair(): { startStopId: string; terminalStopId: string } {
+        const stops = this.stopRepository.findAll();
+
+        if (stops.length < 2) {
+            throw new Error("At least two stops are required to start a game.");
+        }
+
+        const startStop = stops[0];
+        const terminalStop = stops.at(-1);
+
+        return {
+            startStopId: startStop.id,
+            terminalStopId: terminalStop?.id ?? stops[1].id,
+        };
+    }
+
+    private getStopIdsByDistanceRange(startStopId: string, minDistance: number, maxDistance: number): string[] {
+        const distanceByStopId = new Map<string, number>([[startStopId, 0]]);
+        const queue = [startStopId];
+
+        while (queue.length > 0) {
+            const stopId = queue.shift();
+
+            if (!stopId) {
+                continue;
+            }
+
+            const distance = distanceByStopId.get(stopId) ?? 0;
+
+            if (distance >= maxDistance) {
+                continue;
+            }
+
+            for (const connection of this.stopRepository.findConnectionsForStop(stopId)) {
+                const neighborStopId = this.getOtherStopId(connection, stopId);
+
+                if (distanceByStopId.has(neighborStopId)) {
+                    continue;
+                }
+
+                distanceByStopId.set(neighborStopId, distance + 1);
+                queue.push(neighborStopId);
+            }
+        }
+
+        return Array.from(distanceByStopId.entries())
+            .filter(([, distance]) => distance >= minDistance && distance <= maxDistance)
+            .map(([stopId]) => stopId);
+    }
+
+    private shuffle<T>(items: T[]): T[] {
+        const shuffledItems = [...items];
+
+        for (let index = shuffledItems.length - 1; index > 0; index -= 1) {
+            const randomIndex = Math.floor(Math.random() * (index + 1));
+            [shuffledItems[index], shuffledItems[randomIndex]] = [shuffledItems[randomIndex], shuffledItems[index]];
+        }
+
+        return shuffledItems;
+    }
+
     private getOtherStopId(connection: Connection, stopId: string): string {
         return connection.fromStopId === stopId ? connection.toStopId : connection.fromStopId;
     }
@@ -180,8 +259,8 @@ export class GameService {
     }
 
     private toDto(state: GameState): GameStateDto {
-        const startStop = this.requireStop(this.stopRepository.getStartStopId());
-        const terminalStop = this.requireStop(this.stopRepository.getTerminalStopId());
+        const startStop = this.requireStop(state.startStopId);
+        const terminalStop = this.requireStop(state.terminalStopId);
         const visibleStops = state.visibleStopIds.map((stopId) => this.requireStop(stopId));
 
         return {
@@ -197,8 +276,8 @@ export class GameService {
     }
 
     private isCompleted(state: GameState): boolean {
-        const startStopId = this.stopRepository.getStartStopId();
-        const terminalStopId = this.stopRepository.getTerminalStopId();
+        const startStopId = state.startStopId;
+        const terminalStopId = state.terminalStopId;
         const connectedStopIdsByStopId = new Map<string, Set<string>>();
 
         for (const connection of state.visibleConnections) {

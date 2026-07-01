@@ -14,8 +14,6 @@ export type Connection = {
 };
 
 export type TramNetwork = {
-    startStopId: string;
-    terminalStopId: string;
     stops: Stop[];
     connections: Connection[];
 };
@@ -41,6 +39,8 @@ export type GuessResult = {
 
 export type GameState = {
     id: string;
+    startStopId: string;
+    terminalStopId: string;
     visibleStopIds: string[];
     correctStopIds: string[];
     visibleConnections: VisibleConnection[];
