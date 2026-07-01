@@ -1,8 +1,6 @@
 import type { TramNetwork } from "@/backend/type/tram-network/type";
 
 export const initialTramNetwork: TramNetwork = {
-    startStopId: "0",
-    terminalStopId: "5",
     stops: [
         { id: "0", name: "Tylova", x: 80, y: 300 },
         { id: "1", name: "Semilasso", x: 160, y: 300 },

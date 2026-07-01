@@ -32,6 +32,11 @@ export function TramGame() {
 
     const gameState = gameQuery.data;
 
+    async function handlePlayAnother() {
+        const newGameState = await startGameAction();
+        queryClient.setQueryData(gameQueryKey, newGameState);
+    }
+
     return (
         <main className="relative h-dvh w-dvw overflow-hidden bg-background text-on-background">
             {gameState ? <TramMap gameState={gameState} /> : null}
@@ -56,7 +61,7 @@ export function TramGame() {
                     </div>
                 </div>
             ) : null}
-            <CompletionModal open={gameState?.isCompleted ?? false} />
+            <CompletionModal open={gameState?.isCompleted ?? false} onPlayAnother={handlePlayAnother} />
         </main>
     );
 }

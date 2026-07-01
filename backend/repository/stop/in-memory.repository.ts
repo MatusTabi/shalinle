@@ -37,12 +37,4 @@ export class InMemoryStopRepository implements StopRepository {
             (connection) => connection.fromStopId === stopId || connection.toStopId === stopId,
         );
     }
-
-    getStartStopId(): string {
-        return initialTramNetwork.startStopId;
-    }
-
-    getTerminalStopId(): string {
-        return initialTramNetwork.terminalStopId;
-    }
 }

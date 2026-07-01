@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { CompletionModalContent } from "./CompletionModalContent";
 import type { CompletionModalProps } from "./completion-modal.type";
 
-export function CompletionModal({ open }: CompletionModalProps) {
+export function CompletionModal({ open, onPlayAnother }: CompletionModalProps) {
     const [isDismissed, setIsDismissed] = useState(false);
 
     useEffect(() => {
@@ -16,7 +16,7 @@ export function CompletionModal({ open }: CompletionModalProps) {
 
     return (
         <Dialog open={open && !isDismissed} onOpenChange={(nextOpen) => setIsDismissed(!nextOpen)}>
-            <CompletionModalContent />
+            <CompletionModalContent onPlayAnother={onPlayAnother} />
         </Dialog>
     );
 }

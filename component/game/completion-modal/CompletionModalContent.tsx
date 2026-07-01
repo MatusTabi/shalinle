@@ -1,7 +1,11 @@
 import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/component/ui/Dialog";
 import { CompletionModalAction } from "./CompletionModalAction";
 
-export function CompletionModalContent() {
+type CompletionModalContentProps = {
+    onPlayAnother: () => void;
+};
+
+export function CompletionModalContent({ onPlayAnother }: CompletionModalContentProps) {
     return (
         <DialogContent className="border-outline-variant bg-surface-container text-on-surface shadow-[0_24px_120px_rgba(0,0,0,0.65)] sm:max-w-md">
             <DialogHeader>
@@ -13,7 +17,7 @@ export function CompletionModalContent() {
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter className="gap-2 sm:space-x-0">
-                <CompletionModalAction>Play another</CompletionModalAction>
+                <CompletionModalAction onClick={onPlayAnother}>Play another</CompletionModalAction>
                 <CompletionModalAction variant="outline">See results</CompletionModalAction>
             </DialogFooter>
         </DialogContent>
