@@ -25,10 +25,10 @@ export type GuessStatus = "correct-neighbor" | "isolated" | "gray-connected" | "
 export type VisibleConnectionKind = "correct" | "gray";
 
 export type VisibleConnection = {
-    id: string;
-    lineId: string;
-    fromStopId: string;
-    toStopId: string;
+    id: number;
+    lineId: number;
+    fromStopId: number;
+    toStopId: number;
     color: string;
     kind: VisibleConnectionKind;
 };
@@ -41,8 +41,8 @@ export type GuessResult = {
 
 export type GameState = {
     id: string;
-    visibleStopIds: string[];
-    correctStopIds: string[];
+    visibleStopIds: number[];
+    correctStopIds: number[];
     visibleConnections: VisibleConnection[];
     guesses: GuessResult[];
 };

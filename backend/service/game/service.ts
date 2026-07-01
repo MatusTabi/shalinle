@@ -117,11 +117,11 @@ export class GameService {
         return this.toDto(savedState);
     }
 
-    private getOtherStopId(connection: Connection, stopId: string): string {
+    private getOtherStopId(connection: Connection, stopId: number): number {
         return connection.fromStopId === stopId ? connection.toStopId : connection.fromStopId;
     }
 
-    private getReachableCorrectStopIds(visibleStopIds: string[], seedCorrectStopIds: string[]): string[] {
+    private getReachableCorrectStopIds(visibleStopIds: number[], seedCorrectStopIds: number[]): number[] {
         const visibleStopIdSet = new Set(visibleStopIds);
         const reachableStopIdSet = new Set(seedCorrectStopIds.filter((stopId) => visibleStopIdSet.has(stopId)));
         const queue = Array.from(reachableStopIdSet);
@@ -148,7 +148,7 @@ export class GameService {
         return Array.from(reachableStopIdSet);
     }
 
-    private getVisibleConnections(visibleStopIds: string[], correctStopIds: string[]): VisibleConnection[] {
+    private getVisibleConnections(visibleStopIds: number[], correctStopIds: number[]): VisibleConnection[] {
         const visibleStopIdSet = new Set(visibleStopIds);
         const correctStopIdSet = new Set(correctStopIds);
 
@@ -191,7 +191,7 @@ export class GameService {
         };
     }
 
-    private requireStop(stopId: string): Stop {
+    private requireStop(stopId: number): Stop {
         const stop = this.stopRepository.findById(stopId);
 
         if (!stop) {

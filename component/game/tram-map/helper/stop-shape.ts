@@ -7,7 +7,7 @@ export function getStopShapes(stops: StopDto[], edges: VisibleEdge[]): StopShape
 
     return stops.map((stop) => ({
         ...stop,
-        lineCount: stopLineCountById.get(stop.id) ?? 0,
+        lineCount: stopLineCountById.get(String(stop.id)) ?? 0,
     }));
 }
 
@@ -24,13 +24,13 @@ function getUniqueStopLineCountById(edges: VisibleEdge[]) {
     const lineIdsByStopId = new Map<string, Set<string>>();
 
     for (const edge of edges) {
-        const fromStopLineIds = lineIdsByStopId.get(edge.fromStopId) ?? new Set<string>();
-        const toStopLineIds = lineIdsByStopId.get(edge.toStopId) ?? new Set<string>();
+        const fromStopLineIds = lineIdsByStopId.get(String(edge.fromStopId) ?? 0) ?? new Set<string>();
+        const toStopLineIds = lineIdsByStopId.get(String(edge.toStopId) ?? 0) ?? new Set<string>();
 
-        fromStopLineIds.add(edge.lineId);
-        toStopLineIds.add(edge.lineId);
-        lineIdsByStopId.set(edge.fromStopId, fromStopLineIds);
-        lineIdsByStopId.set(edge.toStopId, toStopLineIds);
+        fromStopLineIds.add(String(edge.lineId) ?? 0);
+        toStopLineIds.add(String(edge.lineId) ?? 0);
+        lineIdsByStopId.set(String(edge.fromStopId) ?? 0, fromStopLineIds);
+        lineIdsByStopId.set(String(edge.toStopId) ?? 0, toStopLineIds);
     }
 
     return new Map(Array.from(lineIdsByStopId.entries()).map(([stopId, lineIds]) => [stopId, lineIds.size]));
