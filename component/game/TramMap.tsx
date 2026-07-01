@@ -43,16 +43,10 @@ export function TramMap({ gameState }: TramMapProps) {
         drawRoutes(content, routeEdges);
         drawStops(content, stopShapes);
 
-        const zoom = d3
-            .zoom<SVGSVGElement, unknown>()
-            .translateExtent([
-                [-MAP_WIDTH * 1.5, -MAP_HEIGHT * 1.5],
-                [MAP_WIDTH * 2.5, MAP_HEIGHT * 2.5],
-            ])
-            .on("zoom", (event) => {
-                zoomTransformRef.current = event.transform;
-                applyMapTransform({ content, stopById, transform: event.transform });
-            });
+        const zoom = d3.zoom<SVGSVGElement, unknown>().on("zoom", (event) => {
+            zoomTransformRef.current = event.transform;
+            applyMapTransform({ content, stopById, transform: event.transform });
+        });
 
         const previousVisibleStopIds = previousVisibleStopIdsRef.current;
         const newlyVisibleStops = gameState.visibleStops.filter((stop) => !previousVisibleStopIds.has(stop.id));

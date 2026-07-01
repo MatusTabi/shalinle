@@ -2,20 +2,20 @@ import type { TramNetwork } from "@/backend/type/tram-network/type";
 
 export const initialTramNetwork: TramNetwork = {
     stops: [
-        { id: "0", name: "Tylova", x: 80, y: 300 },
-        { id: "1", name: "Semilasso", x: 160, y: 300 },
-        { id: "2", name: "Husitská", x: 240, y: 300 },
-        { id: "3", name: "Jungmannova", x: 320, y: 300 },
-        { id: "4", name: "Šumavská", x: 400, y: 300 },
-        { id: "5", name: "Hrnčiřská", x: 480, y: 300 },
-        { id: "6", name: "Pionýrská", x: 560, y: 300 },
-        { id: "7", name: "Antonínská", x: 640, y: 300 },
-        { id: "8", name: "Moravské náměstí", x: 720, y: 300 },
-        { id: "9", name: "Malinovského náměstí", x: 820, y: 280 },
-        { id: "10", name: "Hlavní nádraží", x: 900, y: 320 },
-        { id: "11", name: "Nové Sady", x: 900, y: 360 },
+        { id: "0", name: "Tylova", x: -80, y: -800 },
+        { id: "1", name: "Semilasso", x: -75, y: -720 },
+        { id: "2", name: "Husitská", x: -70, y: -640 },
+        { id: "3", name: "Jungmannova", x: -65, y: -560 },
+        { id: "4", name: "Šumavská", x: -60, y: -480 },
+        { id: "5", name: "Hrnčiřská", x: -55, y: -400 },
+        { id: "6", name: "Pionýrská", x: -50, y: -320 },
+        { id: "7", name: "Antonínská", x: -45, y: -240 },
+        { id: "8", name: "Moravské náměstí", x: -40, y: -160 },
+        { id: "9", name: "Malinovského náměstí", x: 20, y: -80 },
+        { id: "10", name: "Hlavní nádraží", x: 0, y: 0 },
+        { id: "11", name: "Nové Sady", x: -40, y: 10 },
 
-        { id: "12", name: "Královo Pole, nádraží", x: 160, y: 220 },
+        { id: "12", name: "Královo Pole, nádraží", x: -45, y: -730 },
     ],
     connections: [
         {
