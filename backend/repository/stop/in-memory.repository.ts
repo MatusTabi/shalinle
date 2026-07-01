@@ -11,6 +11,10 @@ export class InMemoryStopRepository implements StopRepository {
         return initialTramNetwork.stops;
     }
 
+    findAllConnections(): Connection[] {
+        return initialTramNetwork.connections;
+    }
+
     findById(id: string): Stop | undefined {
         return initialTramNetwork.stops.find((stop) => stop.id === id);
     }

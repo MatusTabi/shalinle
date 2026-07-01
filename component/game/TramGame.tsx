@@ -46,7 +46,7 @@ export function TramGame() {
             ) : null}
             {gameState ? (
                 <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-5 sm:pb-8">
-                    <div className="w-full max-w-xl rounded-3xl border border-outline-variant/70 bg-surface-container/75 p-3 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+                    <div className="w-full max-w-xl">
                         <GuessForm
                             availableStopNames={gameState.availableStopNames}
                             disabled={guessMutation.isPending}
