@@ -31,6 +31,10 @@ export class GameService {
             return this.startGame();
         }
 
+        if (this.isCompleted(existingState)) {
+            return this.toDto(existingState);
+        }
+
         const guessedStop = this.stopRepository.findByName(input.stopName);
 
         if (!guessedStop) {
@@ -188,7 +192,51 @@ export class GameService {
             visibleEdges: state.visibleConnections,
             guesses: state.guesses,
             availableStopNames: this.stopRepository.findAll().map((stop) => stop.name),
+            isCompleted: this.isCompleted(state),
         };
+    }
+
+    private isCompleted(state: GameState): boolean {
+        const startStopId = this.stopRepository.getStartStopId();
+        const terminalStopId = this.stopRepository.getTerminalStopId();
+        const connectedStopIdsByStopId = new Map<string, Set<string>>();
+
+        for (const connection of state.visibleConnections) {
+            if (connection.kind !== "correct") {
+                continue;
+            }
+
+            const fromStopConnectionIds = connectedStopIdsByStopId.get(connection.fromStopId) ?? new Set<string>();
+            const toStopConnectionIds = connectedStopIdsByStopId.get(connection.toStopId) ?? new Set<string>();
+
+            fromStopConnectionIds.add(connection.toStopId);
+            toStopConnectionIds.add(connection.fromStopId);
+            connectedStopIdsByStopId.set(connection.fromStopId, fromStopConnectionIds);
+            connectedStopIdsByStopId.set(connection.toStopId, toStopConnectionIds);
+        }
+
+        const visitedStopIds = new Set<string>();
+        const queue = [startStopId];
+
+        while (queue.length > 0) {
+            const stopId = queue.shift();
+
+            if (!stopId || visitedStopIds.has(stopId)) {
+                continue;
+            }
+
+            if (stopId === terminalStopId) {
+                return true;
+            }
+
+            visitedStopIds.add(stopId);
+
+            for (const connectedStopId of connectedStopIdsByStopId.get(stopId) ?? []) {
+                queue.push(connectedStopId);
+            }
+        }
+
+        return false;
     }
 
     private requireStop(stopId: string): Stop {
