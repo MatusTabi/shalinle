@@ -3,6 +3,7 @@
 import { guessStopAction, startGameAction } from "@/backend/action/game/action";
 import type { GameStateDto } from "@/backend/dto/game/dto";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CompletionModal } from "./completion-modal/CompletionModal";
 import { GuessForm } from "./GuessForm";
 import { TramMap } from "./TramMap";
 
@@ -49,12 +50,13 @@ export function TramGame() {
                     <div className="w-full max-w-xl">
                         <GuessForm
                             availableStopNames={gameState.availableStopNames}
-                            disabled={guessMutation.isPending}
+                            disabled={guessMutation.isPending || gameState.isCompleted}
                             onGuess={(stopName) => guessMutation.mutate(stopName)}
                         />
                     </div>
                 </div>
             ) : null}
+            <CompletionModal open={gameState?.isCompleted ?? false} />
         </main>
     );
 }

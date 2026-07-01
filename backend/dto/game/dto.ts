@@ -10,4 +10,5 @@ export type GameStateDto = {
     visibleEdges: EdgeDto[];
     guesses: GuessResultDto[];
     availableStopNames: string[];
+    isCompleted: boolean;
 };
