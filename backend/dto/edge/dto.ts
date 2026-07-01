@@ -1,8 +1,8 @@
 export type EdgeDto = {
-    id: number;
-    lineId: number;
-    fromStopId: number;
-    toStopId: number;
+    id: string;
+    lineId: string;
+    fromStopId: string;
+    toStopId: string;
     color: string;
     kind: "correct" | "gray";
 };

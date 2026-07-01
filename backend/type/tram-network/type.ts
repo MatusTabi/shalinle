@@ -1,21 +1,21 @@
 export type Stop = {
-    id: number;
+    id: string;
     name: string;
     x: number;
     y: number;
 };
 
 export type Connection = {
-    id: number;
-    lineId: number;
-    fromStopId: number;
-    toStopId: number;
+    id: string;
+    lineId: string;
+    fromStopId: string;
+    toStopId: string;
     color: string;
 };
 
 export type TramNetwork = {
-    startStopId: number;
-    terminalStopId: number;
+    startStopId: string;
+    terminalStopId: string;
     stops: Stop[];
     connections: Connection[];
 };
@@ -25,10 +25,10 @@ export type GuessStatus = "correct-neighbor" | "isolated" | "gray-connected" | "
 export type VisibleConnectionKind = "correct" | "gray";
 
 export type VisibleConnection = {
-    id: number;
-    lineId: number;
-    fromStopId: number;
-    toStopId: number;
+    id: string;
+    lineId: string;
+    fromStopId: string;
+    toStopId: string;
     color: string;
     kind: VisibleConnectionKind;
 };
@@ -41,8 +41,8 @@ export type GuessResult = {
 
 export type GameState = {
     id: string;
-    visibleStopIds: number[];
-    correctStopIds: number[];
+    visibleStopIds: string[];
+    correctStopIds: string[];
     visibleConnections: VisibleConnection[];
     guesses: GuessResult[];
 };
