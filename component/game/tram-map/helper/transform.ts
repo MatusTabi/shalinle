@@ -5,7 +5,7 @@ import type { RouteCoordinates, RouteEdge, StopShape } from "../type";
 
 type ApplyMapTransformInput = {
     content: d3.Selection<SVGGElement, unknown, null, undefined>;
-    stopById: Map<number, StopDto>;
+    stopById: Map<string, StopDto>;
     transform: d3.ZoomTransform;
 };
 
@@ -25,7 +25,7 @@ export function applyMapTransform({ content, stopById, transform }: ApplyMapTran
 
 function getRouteCoordinates(
     edge: RouteEdge,
-    stopById: Map<number, StopDto>,
+    stopById: Map<string, StopDto>,
     transform: d3.ZoomTransform,
 ): RouteCoordinates {
     const fromStop = stopById.get(edge.fromStopId);

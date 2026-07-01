@@ -19,6 +19,6 @@ export function getRouteEdges(edges: VisibleEdge[]): RouteEdge[] {
     });
 }
 
-function getStopPairKey(firstStopId: number, secondStopId: number): string {
+function getStopPairKey(firstStopId: string, secondStopId: string): string {
     return [firstStopId, secondStopId].sort().join(":");
 }

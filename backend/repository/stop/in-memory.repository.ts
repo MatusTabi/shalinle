@@ -15,7 +15,7 @@ export class InMemoryStopRepository implements StopRepository {
         return initialTramNetwork.connections;
     }
 
-    findById(id: number): Stop | undefined {
+    findById(id: string): Stop | undefined {
         return initialTramNetwork.stops.find((stop) => stop.id === id);
     }
 
@@ -24,7 +24,7 @@ export class InMemoryStopRepository implements StopRepository {
         return initialTramNetwork.stops.find((stop) => normalizeStopName(stop.name) === normalizedName);
     }
 
-    findConnection(stopId: number, neighborStopId: number): Connection | undefined {
+    findConnection(stopId: string, neighborStopId: string): Connection | undefined {
         return initialTramNetwork.connections.find(
             (connection) =>
                 (connection.fromStopId === stopId && connection.toStopId === neighborStopId) ||
@@ -32,17 +32,17 @@ export class InMemoryStopRepository implements StopRepository {
         );
     }
 
-    findConnectionsForStop(stopId: number): Connection[] {
+    findConnectionsForStop(stopId: string): Connection[] {
         return initialTramNetwork.connections.filter(
             (connection) => connection.fromStopId === stopId || connection.toStopId === stopId,
         );
     }
 
-    getStartStopId(): number {
+    getStartStopId(): string {
         return initialTramNetwork.startStopId;
     }
 
-    getTerminalStopId(): number {
+    getTerminalStopId(): string {
         return initialTramNetwork.terminalStopId;
     }
 }

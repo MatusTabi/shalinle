@@ -4,3 +4,5 @@ export const ROUTE_STROKE_WIDTH = 2;
 export const LANE_GAP = 6;
 export const STOP_RECT_WIDTH = 14;
 export const MAP_BACKGROUND_COLOR = "#0b1326";
+export const INITIAL_VIEWPORT_PADDING = 80;
+export const GUESS_FORM_RESERVED_HEIGHT = 140;
