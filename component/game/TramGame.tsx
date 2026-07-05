@@ -3,8 +3,8 @@
 import { guessStopAction, startGameAction } from "@/backend/action/game/action";
 import type { GameStateDto } from "@/backend/dto/game/dto";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
 import { Button } from "../ui/Button";
+import { OptimalPathCard } from "./cards/OptimalPathCard";
 import { RecentGuessList } from "./cards/RecentGuessList";
 import RouteCard from "./cards/RouteCard";
 import { CompletionModal } from "./completion-modal/CompletionModal";
@@ -78,12 +78,12 @@ export function TramGame() {
                     </section>
                     <aside className="flex min-w-0 flex-col gap-2 lg:flex" aria-label="Guess history">
                         <RecentGuessList guesses={gameState.guesses} />
-                        <Button
-                            className={cn("w-full uppercase", gameState.isCompleted ? "block" : "hidden")}
-                            onClick={() => void handlePlayAnother()}
-                        >
-                            Start New Game
-                        </Button>
+                        {gameState.isCompleted ? <OptimalPathCard stops={gameState.optimalPathStops} /> : null}
+                        {gameState.isCompleted ? (
+                            <Button className="w-full uppercase" onClick={() => void handlePlayAnother()}>
+                                Start New Game
+                            </Button>
+                        ) : null}
                     </aside>
                 </div>
             ) : null}
