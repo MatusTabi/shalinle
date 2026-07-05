@@ -10,6 +10,7 @@ export type GameStateDto = {
     visibleEdges: EdgeDto[];
     guesses: GuessResultDto[];
     availableStopNames: string[];
+    optimalPathStops: StopDto[];
     routeProgress: {
         foundStops: number;
         totalStops: number;

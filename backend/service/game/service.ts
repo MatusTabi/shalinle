@@ -262,6 +262,9 @@ export class GameService {
         const startStop = this.requireStop(state.startStopId);
         const terminalStop = this.requireStop(state.terminalStopId);
         const visibleStops = state.visibleStopIds.map((stopId) => this.requireStop(stopId));
+        const optimalPathStops = this.getShortestPathStopIds(state.startStopId, state.terminalStopId).map((stopId) =>
+            this.requireStop(stopId),
+        );
         const routeProgress = this.getRouteProgress(state);
 
         return {
@@ -272,6 +275,7 @@ export class GameService {
             visibleEdges: state.visibleConnections,
             guesses: state.guesses,
             availableStopNames: this.stopRepository.findAll().map((stop) => stop.name),
+            optimalPathStops,
             routeProgress,
             isCompleted: this.isCompleted(state),
         };
