@@ -6,6 +6,7 @@ const config: Config = {
         extend: {
             fontFamily: {
                 sans: ["var(--font-inter)", "Inter", "Arial", "sans-serif"],
+                mono: ["var(--font-jetbrains-mono)", "JetBrains Mono", "monospace"],
             },
             colors: {
                 border: "var(--outline-variant)",
