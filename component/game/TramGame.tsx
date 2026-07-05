@@ -3,6 +3,7 @@
 import { guessStopAction, startGameAction } from "@/backend/action/game/action";
 import type { GameStateDto } from "@/backend/dto/game/dto";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import RouteCard from "./cards/RouteCard";
 import { CompletionModal } from "./completion-modal/CompletionModal";
 import { GuessForm } from "./GuessForm";
 import { TramMap } from "./TramMap";
@@ -39,7 +40,6 @@ export function TramGame() {
 
     return (
         <main className="relative h-dvh w-dvw overflow-hidden bg-background text-on-background">
-            {gameState ? <TramMap gameState={gameState} /> : null}
             {gameQuery.isLoading ? (
                 <div className="absolute inset-0 grid place-items-center text-sm font-medium text-on-surface-variant">
                     Loading tram network...
@@ -51,14 +51,23 @@ export function TramGame() {
                 </div>
             ) : null}
             {gameState ? (
-                <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-5 sm:pb-8">
-                    <div className="w-full max-w-xl">
-                        <GuessForm
-                            availableStopNames={gameState.availableStopNames}
-                            disabled={guessMutation.isPending || gameState.isCompleted}
-                            onGuess={(stopName) => guessMutation.mutate(stopName)}
-                        />
-                    </div>
+                <div className="absolute inset-x-0 bottom-0 top-[72px] z-10 grid min-h-0 grid-cols-1 gap-4 p-4 lg:grid-cols-[minmax(220px,1fr)_minmax(0,4fr)_minmax(220px,1fr)]">
+                    <aside className="min-w-0 lg:pt-0">
+                        <RouteCard />
+                    </aside>
+                    <section className="relative min-h-0 overflow-hidden rounded-xl border border-outline/70 bg-surface-container-lowest">
+                        <TramMap gameState={gameState} />
+                        <div className="absolute inset-x-0 bottom-4 z-20 flex justify-center px-4 sm:bottom-6">
+                            <div className="w-full max-w-xl">
+                                <GuessForm
+                                    availableStopNames={gameState.availableStopNames.sort((a, b) => a.localeCompare(b))}
+                                    disabled={guessMutation.isPending || gameState.isCompleted}
+                                    onGuess={(stopName) => guessMutation.mutate(stopName)}
+                                />
+                            </div>
+                        </div>
+                    </section>
+                    <aside className="hidden min-w-0 lg:block" aria-label="Future route details" />
                 </div>
             ) : null}
             <CompletionModal open={gameState?.isCompleted ?? false} onPlayAnother={handlePlayAnother} />
