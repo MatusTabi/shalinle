@@ -10,15 +10,23 @@ type GuessFormProps = {
     onGuess: (stopName: string) => void;
 };
 
+const DESKTOP_MEDIA_QUERY = "(min-width: 1024px)";
+
 export function GuessForm({ availableStopNames, disabled, onGuess }: GuessFormProps) {
     const [stopName, setStopName] = useState("");
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
-        if (!disabled) {
-            inputRef.current?.focus();
+        if (!disabled && window.matchMedia(DESKTOP_MEDIA_QUERY).matches) {
+            inputRef.current?.focus({ preventScroll: true });
         }
     }, [disabled]);
+
+    function focusInputOnDesktop() {
+        if (window.matchMedia(DESKTOP_MEDIA_QUERY).matches) {
+            inputRef.current?.focus({ preventScroll: true });
+        }
+    }
 
     return (
         <form
@@ -32,7 +40,7 @@ export function GuessForm({ availableStopNames, disabled, onGuess }: GuessFormPr
 
                 onGuess(stopName);
                 setStopName("");
-                window.setTimeout(() => inputRef.current?.focus(), 0);
+                window.setTimeout(focusInputOnDesktop, 0);
             }}
         >
             <div className="min-w-0 flex-1">
@@ -40,7 +48,6 @@ export function GuessForm({ availableStopNames, disabled, onGuess }: GuessFormPr
                     ref={inputRef}
                     aria-label="Guess a tram stop"
                     autoComplete="off"
-                    autoFocus
                     disabled={disabled}
                     list="stop-names"
                     placeholder="Guess a stop"
@@ -49,7 +56,7 @@ export function GuessForm({ availableStopNames, disabled, onGuess }: GuessFormPr
                     onChange={(event) => setStopName(event.target.value)}
                     onBlur={() => {
                         if (!disabled) {
-                            window.setTimeout(() => inputRef.current?.focus(), 0);
+                            window.setTimeout(focusInputOnDesktop, 0);
                         }
                     }}
                 />
