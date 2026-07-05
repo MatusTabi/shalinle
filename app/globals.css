@@ -60,11 +60,18 @@
 body {
     min-height: 100vh;
     margin: 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     background:
         radial-gradient(circle at 78% 18%, rgba(227, 6, 19, 0.18), transparent 24rem),
         radial-gradient(circle at 18% 76%, rgba(0, 84, 163, 0.14), transparent 22rem), var(--background);
     color: var(--on-background);
+}
+
+@media (min-width: 1024px) {
+    body {
+        overflow: hidden;
+    }
 }
 
 button,

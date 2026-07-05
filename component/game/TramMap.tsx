@@ -75,7 +75,7 @@ export function TramMap({ gameState }: TramMapProps) {
     return (
         <svg
             ref={svgRef}
-            className="block h-full w-full cursor-grab touch-none bg-background active:cursor-grabbing"
+            className="block h-full w-full cursor-grab bg-background active:cursor-grabbing lg:touch-none"
             role="img"
         />
     );
