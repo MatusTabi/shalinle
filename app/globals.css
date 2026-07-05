@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    color-scheme: dark;
+    --surface: #131313;
+    --surface-dim: #131313;
+    --surface-bright: #393939;
+    --surface-container-lowest: #0e0e0e;
+    --surface-container-low: #1c1b1b;
+    --surface-container: #201f1f;
+    --surface-container-high: #2a2a2a;
+    --surface-container-highest: #353534;
+    --on-surface: #e5e2e1;
+    --on-surface-variant: #e9bcb6;
+    --inverse-surface: #e5e2e1;
+    --inverse-on-surface: #313030;
+    --outline: #af8782;
+    --outline-variant: #5e3f3b;
+    --surface-tint: #ffb4aa;
+    --primary: #ffb4aa;
+    --on-primary: #690003;
+    --primary-container: #e30613;
+    --on-primary-container: #fff5f3;
+    --inverse-primary: #c0000c;
+    --secondary: #a8c8ff;
+    --on-secondary: #003061;
+    --secondary-container: #0054a3;
+    --on-secondary-container: #adcbff;
+    --tertiary: #66de7e;
+    --on-tertiary: #003914;
+    --tertiary-container: #008337;
+    --on-tertiary-container: #e1ffde;
+    --error: #ffb4ab;
+    --on-error: #690005;
+    --error-container: #93000a;
+    --on-error-container: #ffdad6;
+    --primary-fixed: #ffdad5;
+    --primary-fixed-dim: #ffb4aa;
+    --on-primary-fixed: #410001;
+    --on-primary-fixed-variant: #930007;
+    --secondary-fixed: #d5e3ff;
+    --secondary-fixed-dim: #a8c8ff;
+    --on-secondary-fixed: #001b3c;
+    --on-secondary-fixed-variant: #004689;
+    --tertiary-fixed: #82fb98;
+    --tertiary-fixed-dim: #66de7e;
+    --on-tertiary-fixed: #002109;
+    --on-tertiary-fixed-variant: #005320;
+    --background: #131313;
+    --on-background: #e5e2e1;
+    --surface-variant: #353534;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background:
+        radial-gradient(circle at 78% 18%, rgba(227, 6, 19, 0.18), transparent 24rem),
+        radial-gradient(circle at 18% 76%, rgba(0, 84, 163, 0.14), transparent 22rem), var(--background);
+    color: var(--on-background);
+}
+
+@media (min-width: 1024px) {
+    body {
+        overflow: hidden;
+    }
+}
+
+button,
+input {
+    font: inherit;
+}

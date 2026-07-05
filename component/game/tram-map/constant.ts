@@ -1,0 +1,17 @@
+export const MAP_WIDTH = 790;
+export const MAP_HEIGHT = 520;
+export const MAP_CENTER_X = MAP_WIDTH / 2;
+export const MAP_CENTER_Y = MAP_HEIGHT / 2;
+export const ROUTE_STROKE_WIDTH = 2;
+export const LANE_GAP = 6;
+export const STOP_RECT_WIDTH = 14;
+export const MIN_VISUAL_SCALE = 0.25;
+export const MAX_VISUAL_SCALE = 1;
+export const MIN_LABEL_VISUAL_SCALE = 0.75;
+export const MOBILE_LABEL_FONT_SIZE = 16;
+export const DESKTOP_LABEL_FONT_SIZE = 9;
+export const LABEL_HIDE_SCALE = 0.35;
+export const MAP_BACKGROUND_COLOR = "#0b1326";
+export const INITIAL_VIEWPORT_PADDING = 80;
+export const NAVIGATION_RESERVED_HEIGHT = 0;
+export const GUESS_FORM_RESERVED_HEIGHT = 10;
