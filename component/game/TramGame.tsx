@@ -54,7 +54,7 @@ export function TramGame() {
                 <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-5 sm:pb-8">
                     <div className="w-full max-w-xl">
                         <GuessForm
-                            availableStopNames={gameState.availableStopNames}
+                            availableStopNames={gameState.availableStopNames.sort((a, b) => a.localeCompare(b))}
                             disabled={guessMutation.isPending || gameState.isCompleted}
                             onGuess={(stopName) => guessMutation.mutate(stopName)}
                         />
