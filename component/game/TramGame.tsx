@@ -3,10 +3,13 @@
 import { guessStopAction, startGameAction } from "@/backend/action/game/action";
 import type { GameStateDto } from "@/backend/dto/game/dto";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { RecentGuessList } from "./cards/RecentGuessList";
 import RouteCard from "./cards/RouteCard";
 import { CompletionModal } from "./completion-modal/CompletionModal";
 import { GuessForm } from "./GuessForm";
 import { TramMap } from "./TramMap";
+import { Button } from "../ui/Button";
+import { cn } from "@/lib/utils";
 
 const gameQueryKey = ["game"] as const;
 
@@ -53,9 +56,15 @@ export function TramGame() {
             {gameState ? (
                 <div className="absolute inset-x-0 bottom-0 top-[72px] z-10 grid min-h-0 grid-cols-1 gap-4 p-4 lg:grid-cols-[minmax(220px,1fr)_minmax(0,4fr)_minmax(220px,1fr)]">
                     <aside className="min-w-0 lg:pt-0">
-                        <RouteCard />
+                        <RouteCard
+                            startStop={gameState.startStop.name}
+                            terminalStop={gameState.terminalStop.name}
+                            totalGuesses={gameState.guesses.length}
+                            routeProgress={`${gameState.routeProgress.foundStops} / ${gameState.routeProgress.totalStops}`}
+                            isCompleted={gameState.isCompleted}
+                        />
                     </aside>
-                    <section className="relative min-h-0 overflow-hidden rounded-xl border border-outline/70 bg-surface-container-lowest">
+                    <section className="relative min-h-0 overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
                         <TramMap gameState={gameState} />
                         <div className="absolute inset-x-0 bottom-4 z-20 flex justify-center px-4 sm:bottom-6">
                             <div className="w-full max-w-xl">
@@ -67,7 +76,15 @@ export function TramGame() {
                             </div>
                         </div>
                     </section>
-                    <aside className="hidden min-w-0 lg:block" aria-label="Future route details" />
+                    <aside className="hidden min-w-0 lg:flex lg:flex-col lg:gap-2" aria-label="Guess history">
+                        <RecentGuessList guesses={gameState.guesses} />
+                        <Button
+                            className={cn("w-full uppercase", gameState.isCompleted ? "block" : "hidden")}
+                            onClick={() => void handlePlayAnother()}
+                        >
+                            Start New Game
+                        </Button>
+                    </aside>
                 </div>
             ) : null}
             <CompletionModal open={gameState?.isCompleted ?? false} onPlayAnother={handlePlayAnother} />

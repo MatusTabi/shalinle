@@ -262,6 +262,7 @@ export class GameService {
         const startStop = this.requireStop(state.startStopId);
         const terminalStop = this.requireStop(state.terminalStopId);
         const visibleStops = state.visibleStopIds.map((stopId) => this.requireStop(stopId));
+        const routeProgress = this.getRouteProgress(state);
 
         return {
             id: state.id,
@@ -271,8 +272,75 @@ export class GameService {
             visibleEdges: state.visibleConnections,
             guesses: state.guesses,
             availableStopNames: this.stopRepository.findAll().map((stop) => stop.name),
+            routeProgress,
             isCompleted: this.isCompleted(state),
         };
+    }
+
+    private getRouteProgress(state: GameState): GameStateDto["routeProgress"] {
+        const optimalPathStopIds = this.getShortestPathStopIds(state.startStopId, state.terminalStopId).filter(
+            (stopId) => stopId !== state.startStopId && stopId !== state.terminalStopId,
+        );
+        const visibleStopIdSet = new Set(state.visibleStopIds);
+
+        return {
+            foundStops: optimalPathStopIds.filter((stopId) => visibleStopIdSet.has(stopId)).length,
+            totalStops: optimalPathStopIds.length,
+        };
+    }
+
+    private getShortestPathStopIds(startStopId: string, terminalStopId: string): string[] {
+        const visitedStopIds = new Set<string>([startStopId]);
+        const previousStopIdByStopId = new Map<string, string>();
+        const queue = [startStopId];
+
+        while (queue.length > 0) {
+            const stopId = queue.shift();
+
+            if (!stopId) {
+                continue;
+            }
+
+            if (stopId === terminalStopId) {
+                return this.reconstructPath(previousStopIdByStopId, startStopId, terminalStopId);
+            }
+
+            for (const connection of this.stopRepository.findConnectionsForStop(stopId)) {
+                const neighborStopId = this.getOtherStopId(connection, stopId);
+
+                if (visitedStopIds.has(neighborStopId)) {
+                    continue;
+                }
+
+                visitedStopIds.add(neighborStopId);
+                previousStopIdByStopId.set(neighborStopId, stopId);
+                queue.push(neighborStopId);
+            }
+        }
+
+        return [startStopId, terminalStopId];
+    }
+
+    private reconstructPath(
+        previousStopIdByStopId: Map<string, string>,
+        startStopId: string,
+        terminalStopId: string,
+    ): string[] {
+        const pathStopIds = [terminalStopId];
+        let currentStopId = terminalStopId;
+
+        while (currentStopId !== startStopId) {
+            const previousStopId = previousStopIdByStopId.get(currentStopId);
+
+            if (!previousStopId) {
+                return [startStopId, terminalStopId];
+            }
+
+            pathStopIds.unshift(previousStopId);
+            currentStopId = previousStopId;
+        }
+
+        return pathStopIds;
     }
 
     private isCompleted(state: GameState): boolean {
