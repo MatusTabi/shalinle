@@ -22,7 +22,7 @@ export function GuessForm({ availableStopNames, disabled, onGuess }: GuessFormPr
 
     return (
         <form
-            className="flex gap-2"
+            className="flex gap-2 rounded-lg border border-outline-variant bg-surface-container-lowest p-2"
             onSubmit={(event) => {
                 event.preventDefault();
 
@@ -44,6 +44,7 @@ export function GuessForm({ availableStopNames, disabled, onGuess }: GuessFormPr
                     disabled={disabled}
                     list="stop-names"
                     placeholder="Guess a stop"
+                    className="border-outline bg-surface text-on-surface placeholder:text-on-surface-variant"
                     value={stopName}
                     onChange={(event) => setStopName(event.target.value)}
                     onBlur={() => {
@@ -58,7 +59,11 @@ export function GuessForm({ availableStopNames, disabled, onGuess }: GuessFormPr
                     ))}
                 </datalist>
             </div>
-            <Button className="shrink-0 px-4 sm:px-5" disabled={disabled || !stopName.trim()} type="submit">
+            <Button
+                className="shrink-0 bg-primary-container px-4 text-on-primary-container hover:bg-primary-container/90 sm:px-5"
+                disabled={disabled || !stopName.trim()}
+                type="submit"
+            >
                 Guess
             </Button>
         </form>

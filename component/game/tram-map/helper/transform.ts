@@ -1,6 +1,13 @@
 import type { StopDto } from "@/backend/dto/stop/dto";
 import type * as d3 from "d3";
-import { LABEL_HIDE_SCALE, LANE_GAP, MIN_LABEL_VISUAL_SCALE, ROUTE_STROKE_WIDTH } from "../constant";
+import {
+    DESKTOP_LABEL_FONT_SIZE,
+    LABEL_HIDE_SCALE,
+    LANE_GAP,
+    MIN_LABEL_VISUAL_SCALE,
+    MOBILE_LABEL_FONT_SIZE,
+    ROUTE_STROKE_WIDTH,
+} from "../constant";
 import type { RouteCoordinates, RouteEdge, StopShape } from "../type";
 import { getViewportX, getViewportY } from "./coordinate";
 import { getVisualScale } from "./visual-scale";
@@ -15,6 +22,7 @@ export function applyMapTransform({ content, stopById, transform }: ApplyMapTran
     const visualScale = getVisualScale(transform.k);
     const labelVisualScale = Math.max(MIN_LABEL_VISUAL_SCALE, visualScale);
     const labelScaleRatio = labelVisualScale / visualScale;
+    const labelFontSize = window.innerWidth < 640 ? MOBILE_LABEL_FONT_SIZE : DESKTOP_LABEL_FONT_SIZE;
 
     content
         .selectAll<SVGLineElement, RouteEdge>("line.route")
@@ -34,7 +42,7 @@ export function applyMapTransform({ content, stopById, transform }: ApplyMapTran
 
     content
         .selectAll<SVGTextElement, StopShape>("g.stop text")
-        .attr("font-size", 9 * labelScaleRatio)
+        .attr("font-size", labelFontSize * labelScaleRatio)
         .attr("display", transform.k < LABEL_HIDE_SCALE ? "none" : null);
 }
 

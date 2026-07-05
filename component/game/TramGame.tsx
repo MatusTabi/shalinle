@@ -3,13 +3,13 @@
 import { guessStopAction, startGameAction } from "@/backend/action/game/action";
 import type { GameStateDto } from "@/backend/dto/game/dto";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
+import { Button } from "../ui/Button";
 import { RecentGuessList } from "./cards/RecentGuessList";
 import RouteCard from "./cards/RouteCard";
 import { CompletionModal } from "./completion-modal/CompletionModal";
 import { GuessForm } from "./GuessForm";
 import { TramMap } from "./TramMap";
-import { Button } from "../ui/Button";
-import { cn } from "@/lib/utils";
 
 const gameQueryKey = ["game"] as const;
 
@@ -42,7 +42,7 @@ export function TramGame() {
     }
 
     return (
-        <main className="relative h-dvh w-dvw overflow-hidden bg-background text-on-background">
+        <main className="relative min-h-dvh w-full overflow-y-auto bg-background text-on-background lg:h-dvh lg:w-dvw lg:overflow-hidden">
             {gameQuery.isLoading ? (
                 <div className="absolute inset-0 grid place-items-center text-sm font-medium text-on-surface-variant">
                     Loading tram network...
@@ -54,7 +54,7 @@ export function TramGame() {
                 </div>
             ) : null}
             {gameState ? (
-                <div className="absolute inset-x-0 bottom-0 top-[72px] z-10 grid min-h-0 grid-cols-1 gap-4 p-4 lg:grid-cols-[minmax(220px,1fr)_minmax(0,4fr)_minmax(220px,1fr)]">
+                <div className="relative z-10 flex min-h-dvh flex-col gap-3 px-3 pb-4 pt-[84px] lg:absolute lg:inset-x-0 lg:bottom-0 lg:top-[72px] lg:grid lg:min-h-0 lg:grid-cols-[minmax(220px,1fr)_minmax(0,4fr)_minmax(220px,1fr)] lg:gap-4 lg:p-4 lg:pt-4">
                     <aside className="min-w-0 lg:pt-0">
                         <RouteCard
                             startStop={gameState.startStop.name}
@@ -64,9 +64,9 @@ export function TramGame() {
                             isCompleted={gameState.isCompleted}
                         />
                     </aside>
-                    <section className="relative min-h-0 overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
+                    <section className="relative h-[68dvh] min-h-[28rem] overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest lg:h-auto lg:min-h-0">
                         <TramMap gameState={gameState} />
-                        <div className="absolute inset-x-0 bottom-4 z-20 flex justify-center px-4 sm:bottom-6">
+                        <div className="absolute inset-x-0 bottom-3 z-20 flex justify-center px-3 sm:bottom-6 sm:px-4">
                             <div className="w-full max-w-xl">
                                 <GuessForm
                                     availableStopNames={gameState.availableStopNames.sort((a, b) => a.localeCompare(b))}
@@ -76,7 +76,7 @@ export function TramGame() {
                             </div>
                         </div>
                     </section>
-                    <aside className="hidden min-w-0 lg:flex lg:flex-col lg:gap-2" aria-label="Guess history">
+                    <aside className="flex min-w-0 flex-col gap-2 lg:flex" aria-label="Guess history">
                         <RecentGuessList guesses={gameState.guesses} />
                         <Button
                             className={cn("w-full uppercase", gameState.isCompleted ? "block" : "hidden")}
