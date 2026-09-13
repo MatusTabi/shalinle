@@ -1,0 +1,26 @@
+name: Quality
+
+on:
+    push:
+    pull_request:
+
+permissions:
+    contents: read
+
+jobs:
+    quality:
+        name: quality
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+            - run: npm ci
+            - run: npm run oxlint:check
+            - run: npm run format:check
+            - run: npm run lint
+            - run: npm run knip
+            - run: npm run typecheck
+            - run: npm run build
