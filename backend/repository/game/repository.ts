@@ -1,4 +1,4 @@
-import type { GameState } from "@/backend/type/tram-network/type";
+import type { GameState } from "@/backend/type/transit-network/type";
 
 export interface GameRepository {
     create(state: GameState): GameState;

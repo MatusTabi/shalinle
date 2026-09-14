@@ -1,4 +1,4 @@
-import type { Connection, Stop } from "@/backend/type/tram-network/type";
+import type { Connection, Stop } from "@/backend/type/transit-network/type";
 
 export interface StopRepository {
     findAll(): Stop[];
