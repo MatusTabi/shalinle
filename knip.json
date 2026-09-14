@@ -1,0 +1,7 @@
+{
+    "$schema": "https://unpkg.com/knip@6/schema.json",
+    "entry": ["app/**/{layout,page,route,template}.{ts,tsx}"],
+    "project": ["app/**/*.{ts,tsx}", "app/**/*.css", "backend/**/*.ts", "component/**/*.{ts,tsx}", "lib/**/*.ts"],
+    "treatConfigHintsAsErrors": true,
+    "ignoreDependencies": ["eslint-config-next"]
+}

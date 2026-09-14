@@ -1,4 +1,5 @@
 import { FlatCompat } from "@eslint/eslintrc";
+import oxlint from "eslint-plugin-oxlint";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -10,6 +11,7 @@ const compat = new FlatCompat({ baseDirectory: __dirname });
 const eslintConfig = [
     { ignores: [".next/**", "node_modules/**", "out/**", "dist/**", "next-env.d.ts"] },
     ...compat.extends("next/core-web-vitals", "next/typescript"),
+    ...oxlint.buildFromOxlintConfigFile(".oxlintrc.json"),
 ];
 
 export default eslintConfig;
