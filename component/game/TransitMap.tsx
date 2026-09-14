@@ -2,18 +2,18 @@
 
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
-import { MAP_HEIGHT, MAP_WIDTH, VIEWPORT_PADDING_PX } from "./tram-map/constant";
-import { drawBackground } from "./tram-map/drawing/draw-background";
-import { drawDefinitions } from "./tram-map/drawing/draw-definition";
-import { drawRoutes } from "./tram-map/drawing/draw-route";
-import { drawStops } from "./tram-map/drawing/draw-stop";
-import { getRouteEdges } from "./tram-map/helper/route-edge";
-import { getStopShapes } from "./tram-map/helper/stop-shape";
-import { applyMapTransform } from "./tram-map/helper/transform";
-import { getFitTransform, isStopVisible } from "./tram-map/helper/viewport-transform";
-import type { TramMapProps } from "./tram-map/type";
+import { MAP_HEIGHT, MAP_WIDTH, VIEWPORT_PADDING_PX } from "./transit-map/constant";
+import { drawBackground } from "./transit-map/drawing/draw-background";
+import { drawDefinitions } from "./transit-map/drawing/draw-definition";
+import { drawRoutes } from "./transit-map/drawing/draw-route";
+import { drawStops } from "./transit-map/drawing/draw-stop";
+import { getRouteEdges } from "./transit-map/helper/route-edge";
+import { getStopShapes } from "./transit-map/helper/stop-shape";
+import { applyMapTransform } from "./transit-map/helper/transform";
+import { getFitTransform, isStopVisible } from "./transit-map/helper/viewport-transform";
+import type { TransitMapProps } from "./transit-map/type";
 
-export function TramMap({ gameState }: TramMapProps) {
+export function TransitMap({ gameState }: TransitMapProps) {
     const svgRef = useRef<SVGSVGElement | null>(null);
     const zoomTransformRef = useRef<d3.ZoomTransform>(d3.zoomIdentity);
     const didInitializeViewportRef = useRef(false);

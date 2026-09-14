@@ -9,11 +9,11 @@ import { RecentGuessList } from "./cards/RecentGuessList";
 import RouteCard from "./cards/RouteCard";
 import { CompletionModal } from "./completion-modal/CompletionModal";
 import { GuessForm } from "./GuessForm";
-import { TramMap } from "./TramMap";
+import { TransitMap } from "./TransitMap";
 
 const gameQueryKey = ["game"] as const;
 
-export function TramGame() {
+export function TransitGame() {
     const queryClient = useQueryClient();
     const gameQuery = useQuery({
         queryKey: gameQueryKey,
@@ -66,7 +66,7 @@ export function TramGame() {
                     </aside>
                     <section className="flex min-w-0 flex-col gap-3 lg:min-h-0 lg:gap-4">
                         <div className="h-[clamp(16rem,calc(100dvh-24rem),28rem)] overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest lg:min-h-0 lg:flex-1">
-                            <TramMap gameState={gameState} />
+                            <TransitMap gameState={gameState} />
                         </div>
                         <div className="w-full lg:mx-auto lg:max-w-xl">
                             <GuessForm
