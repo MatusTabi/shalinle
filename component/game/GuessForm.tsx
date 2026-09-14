@@ -30,7 +30,7 @@ export function GuessForm({ availableStopNames, disabled, onGuess }: GuessFormPr
 
     return (
         <form
-            className="flex gap-2 rounded-lg border border-outline-variant bg-surface-container-lowest p-2"
+            className="flex gap-2 rounded-lg bg-surface-container-lowest p-2"
             onSubmit={(event) => {
                 event.preventDefault();
 

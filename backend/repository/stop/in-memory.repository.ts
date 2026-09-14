@@ -1,5 +1,5 @@
-import { initialTramNetwork } from "@/backend/data/tram-network/initial";
-import type { Connection, Stop } from "@/backend/type/tram-network/type";
+import { initialTransitNetwork } from "@/backend/data/transit-network/initial";
+import type { Connection, Stop } from "@/backend/type/transit-network/type";
 import type { StopRepository } from "./repository";
 
 function normalizeStopName(name: string) {
@@ -8,24 +8,24 @@ function normalizeStopName(name: string) {
 
 export class InMemoryStopRepository implements StopRepository {
     findAll(): Stop[] {
-        return initialTramNetwork.stops;
+        return initialTransitNetwork.stops;
     }
 
     findAllConnections(): Connection[] {
-        return initialTramNetwork.connections;
+        return initialTransitNetwork.connections;
     }
 
     findById(id: string): Stop | undefined {
-        return initialTramNetwork.stops.find((stop) => stop.id === id);
+        return initialTransitNetwork.stops.find((stop) => stop.id === id);
     }
 
     findByName(name: string): Stop | undefined {
         const normalizedName = normalizeStopName(name);
-        return initialTramNetwork.stops.find((stop) => normalizeStopName(stop.name) === normalizedName);
+        return initialTransitNetwork.stops.find((stop) => normalizeStopName(stop.name) === normalizedName);
     }
 
     findConnection(stopId: string, neighborStopId: string): Connection | undefined {
-        return initialTramNetwork.connections.find(
+        return initialTransitNetwork.connections.find(
             (connection) =>
                 (connection.fromStopId === stopId && connection.toStopId === neighborStopId) ||
                 (connection.fromStopId === neighborStopId && connection.toStopId === stopId),
@@ -33,7 +33,7 @@ export class InMemoryStopRepository implements StopRepository {
     }
 
     findConnectionsForStop(stopId: string): Connection[] {
-        return initialTramNetwork.connections.filter(
+        return initialTransitNetwork.connections.filter(
             (connection) => connection.fromStopId === stopId || connection.toStopId === stopId,
         );
     }

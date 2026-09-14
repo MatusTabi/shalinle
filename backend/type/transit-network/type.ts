@@ -13,14 +13,14 @@ export type Connection = {
     color: string;
 };
 
-export type TramNetwork = {
+export type TransitNetwork = {
     stops: Stop[];
     connections: Connection[];
 };
 
-export type GuessStatus = "correct-neighbor" | "isolated" | "gray-connected" | "duplicate" | "unknown";
+type GuessStatus = "correct-neighbor" | "isolated" | "gray-connected" | "duplicate" | "unknown";
 
-export type VisibleConnectionKind = "correct" | "gray";
+type VisibleConnectionKind = "correct" | "gray";
 
 export type VisibleConnection = {
     id: string;
