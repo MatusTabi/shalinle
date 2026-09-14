@@ -1,7 +1,7 @@
 import type { GameStateDto } from "@/backend/dto/game/dto";
 import type { StopDto } from "@/backend/dto/stop/dto";
 
-export type TramMapProps = {
+export type TransitMapProps = {
     gameState: GameStateDto;
 };
 

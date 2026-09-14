@@ -1,5 +1,5 @@
 import type { GameRepository } from "@/backend/repository/game/repository";
-import type { GameState } from "@/backend/type/tram-network/type";
+import type { GameState } from "@/backend/type/transit-network/type";
 
 const gameStore = new Map<string, GameState>();
 

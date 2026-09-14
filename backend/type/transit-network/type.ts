@@ -13,7 +13,7 @@ export type Connection = {
     color: string;
 };
 
-export type TramNetwork = {
+export type TransitNetwork = {
     stops: Stop[];
     connections: Connection[];
 };
