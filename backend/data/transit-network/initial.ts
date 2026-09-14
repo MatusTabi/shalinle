@@ -1,6 +1,6 @@
-import type { TramNetwork } from "@/backend/type/tram-network/type";
+import type { TransitNetwork } from "@/backend/type/transit-network/type";
 
-export const initialTramNetwork: TramNetwork = {
+export const initialTransitNetwork: TransitNetwork = {
     stops: [
         { id: "0", name: "Tylova", x: -85, y: -880 },
         { id: "1", name: "Semilasso", x: -80, y: -800 },

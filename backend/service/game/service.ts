@@ -2,7 +2,7 @@ import type { GameStateDto } from "@/backend/dto/game/dto";
 import type { GuessStopDto } from "@/backend/dto/guess/dto";
 import type { GameRepository } from "@/backend/repository/game/repository";
 import type { StopRepository } from "@/backend/repository/stop/repository";
-import type { Connection, GameState, GuessResult, Stop, VisibleConnection } from "@/backend/type/tram-network/type";
+import type { Connection, GameState, GuessResult, Stop, VisibleConnection } from "@/backend/type/transit-network/type";
 
 export class GameService {
     constructor(

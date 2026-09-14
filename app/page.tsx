@@ -1,5 +1,5 @@
-import { TramGame } from "@/component/game/TramGame";
+import { TransitGame } from "@/component/game/TransitGame";
 
 export default function Home() {
-    return <TramGame />;
+    return <TransitGame />;
 }
