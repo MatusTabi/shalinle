@@ -31,7 +31,6 @@ export function TramMap({ gameState }: TramMapProps) {
         svg.selectAll("*").remove();
 
         svg.attr("viewBox", `0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`).attr("preserveAspectRatio", "xMidYMid slice");
-        svg.append("title").text("Visible schematic tram map");
 
         drawDefinitions(svg);
         drawBackground(svg);
