@@ -64,16 +64,16 @@ export function TramGame() {
                             isCompleted={gameState.isCompleted}
                         />
                     </aside>
-                    <section className="relative h-[68dvh] min-h-[28rem] overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest lg:h-auto lg:min-h-0">
-                        <TramMap gameState={gameState} />
-                        <div className="absolute inset-x-0 bottom-3 z-20 flex justify-center px-3 sm:bottom-6 sm:px-4">
-                            <div className="w-full max-w-xl">
-                                <GuessForm
-                                    availableStopNames={gameState.availableStopNames.sort((a, b) => a.localeCompare(b))}
-                                    disabled={guessMutation.isPending || gameState.isCompleted}
-                                    onGuess={(stopName) => guessMutation.mutate(stopName)}
-                                />
-                            </div>
+                    <section className="flex min-w-0 flex-col gap-3 lg:min-h-0 lg:gap-4">
+                        <div className="h-[clamp(16rem,calc(100dvh-24rem),28rem)] overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest lg:min-h-0 lg:flex-1">
+                            <TramMap gameState={gameState} />
+                        </div>
+                        <div className="w-full lg:mx-auto lg:max-w-xl">
+                            <GuessForm
+                                availableStopNames={gameState.availableStopNames.sort((a, b) => a.localeCompare(b))}
+                                disabled={guessMutation.isPending || gameState.isCompleted}
+                                onGuess={(stopName) => guessMutation.mutate(stopName)}
+                            />
                         </div>
                     </section>
                     <aside className="flex min-w-0 flex-col gap-2 lg:flex" aria-label="Guess history">
