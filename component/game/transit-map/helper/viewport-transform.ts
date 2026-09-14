@@ -1,18 +1,12 @@
 import type { StopDto } from "@/backend/dto/stop/dto";
 import * as d3 from "d3";
-import {
-    GUESS_FORM_RESERVED_HEIGHT,
-    INITIAL_VIEWPORT_PADDING,
-    MAP_HEIGHT,
-    MAP_WIDTH,
-    NAVIGATION_RESERVED_HEIGHT,
-} from "../constant";
+import { INITIAL_VIEWPORT_PADDING, MAP_HEIGHT, MAP_WIDTH } from "../constant";
 import { getViewportX, getViewportY } from "./coordinate";
 
 const SAFE_MIN_X = INITIAL_VIEWPORT_PADDING;
 const SAFE_MAX_X = MAP_WIDTH - INITIAL_VIEWPORT_PADDING;
-const SAFE_MIN_Y = NAVIGATION_RESERVED_HEIGHT + INITIAL_VIEWPORT_PADDING;
-const SAFE_MAX_Y = MAP_HEIGHT - GUESS_FORM_RESERVED_HEIGHT - INITIAL_VIEWPORT_PADDING;
+const SAFE_MIN_Y = INITIAL_VIEWPORT_PADDING;
+const SAFE_MAX_Y = MAP_HEIGHT - INITIAL_VIEWPORT_PADDING;
 
 export function getFitTransform(stops: StopDto[]): d3.ZoomTransform {
     if (stops.length === 0) {
@@ -27,10 +21,9 @@ export function getFitTransform(stops: StopDto[]): d3.ZoomTransform {
     const maxY = Math.max(...yValues) + INITIAL_VIEWPORT_PADDING;
     const boundsWidth = Math.max(1, maxX - minX);
     const boundsHeight = Math.max(1, maxY - minY);
-    const availableHeight = MAP_HEIGHT - NAVIGATION_RESERVED_HEIGHT - GUESS_FORM_RESERVED_HEIGHT;
-    const scale = Math.min(MAP_WIDTH / boundsWidth, availableHeight / boundsHeight);
+    const scale = Math.min(MAP_WIDTH / boundsWidth, MAP_HEIGHT / boundsHeight);
     const translateX = (MAP_WIDTH - boundsWidth * scale) / 2 - minX * scale;
-    const translateY = NAVIGATION_RESERVED_HEIGHT + (availableHeight - boundsHeight * scale) / 2 - minY * scale;
+    const translateY = (MAP_HEIGHT - boundsHeight * scale) / 2 - minY * scale;
 
     return d3.zoomIdentity.translate(translateX, translateY).scale(scale);
 }
