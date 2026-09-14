@@ -11,4 +11,4 @@ export const MIN_LABEL_VISUAL_SCALE = 0.75;
 export const MOBILE_LABEL_FONT_SIZE = 16;
 export const DESKTOP_LABEL_FONT_SIZE = 9;
 export const LABEL_HIDE_SCALE = 0.35;
-export const INITIAL_VIEWPORT_PADDING = 80;
+export const VIEWPORT_PADDING_PX = 32;
