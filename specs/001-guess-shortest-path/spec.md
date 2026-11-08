@@ -22,7 +22,7 @@ contains at least six stops, including both endpoints.
 - Q: How should access to an anonymous attempt be controlled? → A: Access control is deferred; authentication will be handled later.
 - Q: What should happen if an attempt cannot be found because a later request reaches a different running instance? → A: Report the attempt as unavailable; the player starts a new attempt.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Obtain a Playable Challenge (Priority: P1)
 
@@ -67,7 +67,7 @@ and longer routes; submit invalid stops and verify the progress and final result
    attempt completes and returns its length, the minimum length, and whether it is shortest;
    all tied shortest routes are accepted.
 5. **Given** a completed attempt, **When** another stop is guessed for it, **Then** the guess
-    is rejected and the completed route and result remain unchanged.
+   is rejected and the completed route and result remain unchanged.
 6. **Given** multiple shortest routes, **When** a stop appears at the proposed position in any
    one of them, **Then** it is marked as being at an optimal position, even after a detour.
 7. **Given** an unknown stop, **When** it is guessed, **Then** it is rejected with a reason and
@@ -124,7 +124,7 @@ endpoints; verify that both are reported without accepting a guess or claiming a
   progress is promised across restarts or separate service instances. If an attempt is not found,
   report it as unavailable and allow the player to start a new attempt.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -177,7 +177,7 @@ endpoints; verify that both are reported without accepting a guess or claiming a
   unexpected technical failures. Technical failures MUST be handled without exposing sensitive
   details to the client or presenting the failure as a game-rule rejection.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Stop**: A named location with a unique identifier within the sample network.
 - **Connection**: A permitted directed traversal from one stop to another; each counts as one hop.
@@ -190,7 +190,7 @@ endpoints; verify that both are reported without accepting a guess or claiming a
 - **Evaluation**: A guess's connectivity and optimal-position marks and, after completion, the
   route's hop count, minimum hop count, and whether it is shortest.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
@@ -230,5 +230,5 @@ endpoints; verify that both are reported without accepting a guess or claiming a
   authentication and all client integration must comply with the project constitution. Attempt
   access control is deferred; this phase does not promise private or owner-restricted attempts.
 - Persistent data, production network data, and the visual interface are future work.
-- All implementation and verification must comply with [constitution v1.3.0](../../.specify/memory/constitution.md). Its requirements
+- All implementation and verification must comply with [constitution v1.4.0](../../.specify/memory/constitution.md). Its requirements
   for user-facing end-to-end tests apply when such a client flow exists; this phase has no frontend.
