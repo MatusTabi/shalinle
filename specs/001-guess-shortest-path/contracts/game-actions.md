@@ -6,9 +6,11 @@ untrusted argument with Zod. All identifiers are nonempty strings. Callers must 
 publicly reachable; authentication and attempt authorization are explicitly deferred.
 Perform validation and precondition guards before mutations; check operation-dependent conditions
 before acting on their results. Expected business failures are Results, not thrown exceptions.
-Technical failures use exceptions handled at an appropriate boundary, reported to Sentry without
-secrets, private state, attempt identifiers, or guess histories, and never exposed to callers as raw
-errors or stack traces.
+Technical failures are reported to Sentry at the action boundary without secrets, private state,
+attempt identifiers, or guess histories. The action throws a sanitized exception rather than returning
+a business-error Result; raw errors and stack traces are never exposed to callers. Clients MUST NOT
+rely on the exception message, which may be replaced by the framework, or treat the failure as a
+game-rule rejection. After an ambiguous guess failure, clients must retrieve progress before retrying.
 
 ## Shared response shapes
 

@@ -1,6 +1,6 @@
 # Implementation Plan: Guess the Shortest Path
 
-**Branch**: `001-guess-shortest-path` | **Date**: 2026-11-07 | **Spec**: [spec.md](spec.md)
+**Branch**: `feat/server-scaffold` | **Date**: 2026-11-07 | **Spec**: [spec.md](spec.md)
 
 **Input**: Feature specification from `specs/001-guess-shortest-path/spec.md`
 
@@ -59,7 +59,8 @@ concurrency or availability guarantee. Repeated guesses and routes are not artif
   package scripts do not establish Husky or CI; these must be added or verified during implementation.
 - Sentry is required for logging and error monitoring; avoid logging guess histories or attempt IDs.
 - Expected business failures use explicit Results; technical failures use exceptions handled at
-  appropriate boundaries without exposing sensitive details. Validate and check preconditions with
+  action boundaries by reporting sanitized details to Sentry and throwing sanitized exceptions, without
+  exposing sensitive details or promising a stable client-visible exception message. Validate and check preconditions with
   guard clauses before successful work; check operation-dependent conditions before dependent work.
 - Document all required environment variables in `.env.example` without real credentials; use a
   server-only Zod validator and test missing, empty and malformed values without leaking secrets.

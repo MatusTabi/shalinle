@@ -171,8 +171,8 @@ endpoints; verify that both are reported without accepting a guess or claiming a
   proposed position in at least one shortest route from the challenge start to its terminal.
   The proposed position is one after the current accepted route's last position, with the start
   at position one. This mark MUST be independent of connectivity and the preceding guessed route.
-- **FR-015**: Attempts to offer a challenge whose shortest route contains fewer than six stops
-  MUST report it as unavailable.
+- **FR-015**: A challenge that does not meet the minimum shortest-route length in FR-001 MUST be
+  reported as unavailable.
 - **FR-016**: Expected game-rule failures MUST have explicit outcomes distinguishable from
   unexpected technical failures. Technical failures MUST be handled without exposing sensitive
   details to the client or presenting the failure as a game-rule rejection.
