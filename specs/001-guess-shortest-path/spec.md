@@ -82,15 +82,21 @@ so that players are not presented with an impossible game.
 
 **Why this priority**: Predictable failure handling makes the game usable beyond the happy path.
 
-**Independent Test**: Request an unknown challenge and exercise a network with disconnected
+**Independent Test**: Start an attempt with an unknown challenge and exercise a network with disconnected
 endpoints; verify that both are reported without accepting a guess or claiming a solution.
 
 **Acceptance Scenarios**:
 
-1. **Given** an unknown challenge identifier, **When** it is requested or used for a guess,
+1. **Given** an unknown challenge identifier, **When** an attempt is started with that identifier,
    **Then** the operation reports that the challenge is unavailable.
 2. **Given** a challenge whose endpoints have no connecting route, **When** it is requested,
    **Then** it is reported as unavailable rather than offered as playable.
+3. **Given** an unexpected technical failure, **When** a game operation cannot be completed,
+   **Then** the client is informed that the operation failed without receiving sensitive details
+   or a misleading game-rule rejection.
+4. **Given** an existing attempt whose challenge is unavailable, **When** a stop is guessed for
+   that attempt, **Then** the operation reports that the challenge is unavailable and does not
+   change the attempt.
 
 ### Edge Cases
 
@@ -110,6 +116,9 @@ endpoints; verify that both are reported without accepting a guess or claiming a
 - A valid next stop that leads to a dead end is accepted; the player may start a new attempt.
 - Two guesses against the same prior attempt state cannot both advance that state; a stale guess
   is rejected without changing the route, and the latest progress is available to the client.
+- A guess transition commits in full or leaves the attempt unchanged, including on an unexpected
+  technical failure before commit. If a guess response is not definitive, the client retrieves the
+  latest progress before deciding whether to retry and uses the retrieved revision for any retry.
 - A challenge with identical endpoints is not offered in this phase.
 - Sample data and any transient state may reset when the running service restarts; no player
   progress is promised across restarts or separate service instances. If an attempt is not found,
@@ -122,10 +131,11 @@ endpoints; verify that both are reported without accepting a guess or claiming a
 - **FR-001**: The system MUST provide at least one predefined, solvable challenge based on
   in-memory sample network data, with distinct start and terminal stops. Every offered challenge's
   shortest route MUST contain at least six stops including both endpoints (at least five connections).
-- **FR-002**: The system MUST make challenge details available to a future client, including a
-  stable challenge identifier, start and terminal stop identifiers and names, and the available
-  stop identifiers and names. Challenge details MUST NOT disclose directed connections; the
-  connectivity of a guessed stop is disclosed through its guess result.
+- **FR-002**: The system MUST allow a future client to request the predefined challenge without
+  supplying a challenge identifier. The returned details MUST include a stable challenge identifier,
+  start and terminal stop identifiers and names, and the available stop identifiers and names.
+  Challenge details MUST NOT disclose directed connections; the connectivity of a guessed stop is
+  disclosed through its guess result.
 - **FR-003**: Challenge details and in-progress feedback MUST NOT disclose a complete shortest
   route or its exact length before an attempt completes; per-guess marks are permitted.
 - **FR-004**: The system MUST allow a player to start an independent attempt for an available
@@ -146,7 +156,8 @@ endpoints; verify that both are reported without accepting a guess or claiming a
   MUST include both lengths. Unconnected guesses MUST NOT affect this classification. Completed
   attempts MUST reject further guesses without changes.
 - **FR-009**: The system MUST report an unknown or unsolvable challenge as unavailable and MUST
-  NOT evaluate guesses against it as though it were playable.
+  NOT evaluate guesses against it as though it were playable. A guess for an attempt whose challenge
+  is unavailable MUST report the challenge as unavailable without changing the attempt.
 - **FR-010**: The system MUST expose challenge retrieval, attempt creation, progress retrieval,
   and single-stop guessing to a future frontend without requiring a frontend in this phase.
 - **FR-011**: This phase MUST use in-memory sample data and MUST NOT require persistent game
@@ -162,6 +173,9 @@ endpoints; verify that both are reported without accepting a guess or claiming a
   at position one. This mark MUST be independent of connectivity and the preceding guessed route.
 - **FR-015**: Attempts to offer a challenge whose shortest route contains fewer than six stops
   MUST report it as unavailable.
+- **FR-016**: Expected game-rule failures MUST have explicit outcomes distinguishable from
+  unexpected technical failures. Technical failures MUST be handled without exposing sensitive
+  details to the client or presenting the failure as a game-rule rejection.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -184,12 +198,23 @@ endpoints; verify that both are reported without accepting a guess or claiming a
   and a shortest route containing at least six stops including both endpoints.
 - **SC-002**: In a representative set covering tied shortest routes, detours, connected and
   unconnected guesses, and unknown stops, 100% of guesses and completed routes are correctly
-  classified, and all known guesses are available in the attempt history.
+  classified, and all known guesses are available in the attempt history. The set MUST include tied
+  shortest routes; connected and unconnected guesses both at and not at an optimal position; a guess
+  after a detour; a repeated stop; a proposed position beyond every shortest route; an unknown stop;
+  and shortest and longer completions. Checks MUST verify both marks for every known guess, rejection
+  of the unknown stop, ordered history, and final route classification where applicable.
 - **SC-003**: In acceptance checks, 100% of malformed inputs, unknown challenges, and unsolvable
   challenges receive an explicit failure outcome rather than a successful game result.
 - **SC-004**: In 100% of integration acceptance checks, a client integrator can obtain a
   challenge, build a route one stop at a time, and obtain its result using the documented
   capabilities without requiring a frontend or external transit data.
+- **SC-005**: Acceptance checks exercise challenge retrieval, attempt creation, attempt progress
+  retrieval, and single-stop guessing. They verify explicit outcomes for malformed inputs,
+  unavailable challenges, unavailable attempts, unknown stops, stale attempt revisions, and guesses
+  against completed attempts.
+- **SC-006**: For each rejected guess in the acceptance checks, the attempt's route, current stop,
+  guess history, revision, status, and completion result remain unchanged. For a stale guess, the
+  latest attempt progress is available so the client can retry.
 
 ## Assumptions
 
@@ -205,5 +230,5 @@ endpoints; verify that both are reported without accepting a guess or claiming a
   authentication and all client integration must comply with the project constitution. Attempt
   access control is deferred; this phase does not promise private or owner-restricted attempts.
 - Persistent data, production network data, and the visual interface are future work.
-- All implementation and verification must comply with constitution v1.2.0. Its requirements
+- All implementation and verification must comply with [constitution v1.3.0](../../.specify/memory/constitution.md). Its requirements
   for user-facing end-to-end tests apply when such a client flow exists; this phase has no frontend.

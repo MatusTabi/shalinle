@@ -38,3 +38,5 @@
   progress and completion occurs when the terminal is reached.
 - Revalidated for per-guess connectivity and optimal-position feedback, six-stop minimum, and
   constitution v1.2.0. The phase remains server-only; user-facing end-to-end flows are future work.
+- Revalidated against constitution v1.3.0 after adding FR-016 and its acceptance scenario; all
+  checklist items pass for the specification. Implementation and quality gates remain to be verified.
