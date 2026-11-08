@@ -1,13 +1,9 @@
 <!--
-Sync Impact Report
-Version: 1.1.0 → 1.2.0
-Modified principles:
-- III. Explicit Domain and Type Safety → III. Explicit Domain and Type Safety
-- IV. Unit and Integration Tests → IV. Unit, Integration, and End-to-End Tests
-- V. Automated Quality Gates → V. Automated Quality Gates
-Added sections: None
+Sync Impact Report (remove before committing)
+Version: 1.2.0 → 1.3.0
+Modified principles: None
+Added sections: VI. Explicit Outcomes and Guard-First Control Flow
 Removed sections: None
-Other changes: Expanded Technology Constraints and Development Workflow.
 Follow-up TODOs: None
 -->
 # Shalinle Constitution
@@ -50,6 +46,19 @@ pre-commit hooks MUST run the configured pre-commit checks; the full quality gat
 checked before changes are merged. GitHub Actions MUST run the full quality gates, including
 Playwright end-to-end tests, in CI. Automation provides consistent feedback without replacing review.
 
+### VI. Explicit Outcomes and Guard-First Control Flow
+
+Expected business-rule failures MUST be represented as explicit Result values where applicable,
+rather than thrown exceptions. Technical failures MUST use exceptions, which MUST be handled at
+appropriate boundaries without exposing sensitive details. This distinction makes expected business
+outcomes explicit while preserving visibility into technical failures.
+
+Methods MUST perform applicable validation and precondition checks before their intended successful
+action, using guard clauses and early returns for failure cases. The successful path MUST remain clear
+and follow those checks. Checks that depend on the result of an operation MUST occur after that
+operation and before any subsequent action that depends on them. This ordering makes control flow
+readable without compromising correctness.
+
 ## Technology Constraints
 
 - The application MUST use Next.js and deploy to Vercel.
@@ -82,4 +91,4 @@ require a MAJOR increment; new principles, sections, or materially expanded guid
 increment; clarifications and other non-semantic changes require a PATCH increment. The ratification
 date records initial adoption, and the last-amended date changes whenever this document is amended.
 
-**Version**: 1.2.0 | **Ratified**: 2026-11-05 | **Last Amended**: 2026-11-07
+**Version**: 1.3.0 | **Ratified**: 2026-11-05 | **Last Amended**: 2026-11-08
