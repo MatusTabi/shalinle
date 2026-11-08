@@ -23,8 +23,11 @@ for logging/error monitoring as required by the constitution. Use existing Oxlin
 **Storage**: Process-local in-memory immutable sample graph and transient attempt repository;
 no database in this phase. If persistence is added later, use Drizzle with Turso-compatible SQLite.
 
-**Testing**: Bun unit and integration tests; typecheck, Oxlint and Oxfmt; GitHub Actions full
-quality gates, including Playwright, per constitution. No user-facing flow is added in this phase.
+**Testing**: Bun unit and integration tests; typecheck, Oxlint and Oxfmt; GitHub Actions runs all
+applicable quality gates. Retain Playwright in the project testing stack. This server-only phase adds
+no Playwright E2E tests because it introduces or modifies no user-facing flow. CI must run the
+existing Playwright E2E suite whenever one exists; only if no E2E suite exists may the Playwright
+gate be marked not applicable, never passed. Verify suite existence when evaluating the gate.
 
 **Target Platform**: Next.js server runtime, local development and Vercel deployment.
 
@@ -53,8 +56,11 @@ concurrency or availability guarantee. Repeated guesses and routes are not artif
 - Server Actions: all frontend-facing operations are Server Actions; no API route handlers.
 - Validate all untrusted inputs using Zod; no `any`; use value objects where justified and place
   type declarations in separate files.
-- Bun unit and integration tests cover behavior and boundaries. No new user-facing flow exists;
-  Playwright applies when one is added. Full CI gates include Playwright as constitution requires.
+- Bun unit and integration tests cover behavior and boundaries. Retain Playwright; add no E2E tests
+  for this server-only change. User-facing flows must be covered by Playwright E2E tests when added
+  or modified. CI must run any existing Playwright E2E suite, regardless of this feature's scope.
+  Only if no E2E suite exists may this feature's Playwright gate be marked not applicable, not passed;
+  this does not waive unit, integration or other applicable gates.
 - Use Oxlint, Oxfmt, typecheck, Bun tests, Husky pre-commit hooks and GitHub Actions gates. Existing
   package scripts do not establish Husky or CI; these must be added or verified during implementation.
 - Sentry is required for logging and error monitoring; avoid logging guess histories or attempt IDs.
@@ -71,7 +77,8 @@ concurrency or availability guarantee. Repeated guesses and routes are not artif
 
 **Post-design: PASS conditionally.** Contracts preserve Server Actions, explicit business Results,
 guard-first checks and sanitized technical failures; environment validation, testing/CI and Sentry
-remain implementation deliverables, not completed gates. Recheck compliance during implementation.
+remain implementation deliverables, not completed gates. Verify whether an E2E suite exists and apply
+the conditional Playwright gate above; recheck compliance during implementation.
 
 ## Project Structure
 
