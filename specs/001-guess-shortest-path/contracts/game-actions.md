@@ -7,7 +7,8 @@ publicly reachable; authentication and attempt authorization are explicitly defe
 Perform validation and precondition guards before mutations; check operation-dependent conditions
 before acting on their results. Expected business failures are Results, not thrown exceptions.
 Technical failures use exceptions handled at an appropriate boundary, reported to Sentry without
-secrets or private state, and never exposed to callers as raw errors or stack traces.
+secrets, private state, attempt identifiers, or guess histories, and never exposed to callers as raw
+errors or stack traces.
 
 ## Shared response shapes
 
@@ -21,21 +22,32 @@ secrets or private state, and never exposed to callers as raw errors or stack tr
   status, result? }`. Status is `active` or `completed`. A result is present only when completed
   and is `{ routeHops, minimumHops, isShortest }`. All counts and revisions are integers.
 
+Business-error messages MUST use fixed, non-sensitive descriptions and MUST NOT include submitted
+identifiers or internal implementation details. For `STALE_ATTEMPT`, `latestAttempt` MUST contain the
+full contract-defined `Attempt`, including its identifier and guess history. This snapshot does not
+establish ownership or confidentiality.
+
 ## Operations
 
 | Operation | Input | Success data | Additional errors |
 |-----------|-------|--------------|-------------------|
-| `getChallenge` | `{ challengeId }` | `{ id, startStopId, terminalStopId, stops: Stop[] }` | `CHALLENGE_UNAVAILABLE` |
+| `getChallenge` | None | `{ id, startStopId, terminalStopId, stops: Stop[] }` | `CHALLENGE_UNAVAILABLE` |
 | `startAttempt` | `{ challengeId }` | `Attempt` initialized at start, revision 0 | `CHALLENGE_UNAVAILABLE` |
 | `getAttempt` | `{ attemptId }` | current `Attempt` | `ATTEMPT_UNAVAILABLE` |
-| `guessStop` | `{ attemptId, stopId, expectedRevision }` | `{ attempt: Attempt, guess: Guess }` | `ATTEMPT_UNAVAILABLE`, `UNKNOWN_STOP`, `STALE_ATTEMPT`, `ATTEMPT_COMPLETED` |
+| `guessStop` | `{ attemptId, stopId, expectedRevision }` | `{ attempt: Attempt, guess: Guess }` | `ATTEMPT_UNAVAILABLE`, `CHALLENGE_UNAVAILABLE`, `UNKNOWN_STOP`, `STALE_ATTEMPT`, `ATTEMPT_COMPLETED` |
 
-All operations can return `INVALID_INPUT`. `expectedRevision` is a nonnegative integer. Challenge
-lookup uses the predefined challenge ID; callers obtain it from documented sample configuration.
-An unknown, unreachable, identical-endpoint or too-short challenge is unavailable. If multiple
-error conditions apply, precedence is validation, unavailable attempt, stale revision, completed
-attempt, unknown stop. Errors never change state. Stale errors carry the latest snapshot so the
-caller can retry against its revision.
+Operations with inputs can return `INVALID_INPUT`. `expectedRevision` is a nonnegative integer. A
+client requests the predefined challenge without supplying a challenge identifier. The response
+includes its stable identifier, which the client supplies to `startAttempt`. The `stops` list includes
+exactly one entry for each endpoint; `startStopId` and `terminalStopId` match those entries' IDs, and
+their names provide the corresponding endpoint names.
+
+An unknown, unreachable, identical-endpoint or too-short challenge is unavailable. If an existing
+attempt's challenge is unavailable when `guessStop` is called, it returns `CHALLENGE_UNAVAILABLE`
+without changing the attempt. If multiple error conditions apply to `guessStop`, precedence is input
+validation, unavailable attempt, unavailable challenge, stale revision, completed attempt, and
+unknown stop. Errors never change state. Stale errors carry the latest snapshot so the caller can
+retry against its revision.
 
 `guessStop` records every known stop and increments revision even when unconnected. It returns the
 guess's marks and the updated snapshot; the snapshot's route advances only on a directed connection.
@@ -44,4 +56,7 @@ count; per-guess feedback intentionally allows inference. See [data model](../da
 
 Attempt identifiers do not establish ownership or confidentiality. If the attempt cannot be found,
 including after a restart or instance change, return `ATTEMPT_UNAVAILABLE`; start a fresh attempt.
-Replays are not idempotent: retry using the returned/current revision after retrieving progress.
+Guess transitions commit in full or leave the attempt entirely unchanged; an unexpected technical
+failure before commit cannot leave partial state. If a client does not receive a definitive guess
+response, it must retrieve the latest progress before deciding whether to retry. Replays are not
+idempotent: any retry must use the revision from the retrieved progress.

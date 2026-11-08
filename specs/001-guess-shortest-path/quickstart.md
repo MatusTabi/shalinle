@@ -11,8 +11,8 @@ exist yet. It does not require a frontend, database, real transit data, or user 
   Production runtime requires `SENTRY_DSN`, provisioned through Vercel environment settings.
   Local tests must not require monitoring credentials or network access. Next test mode does not
   load `.env.local`; standalone tests should set explicit fixture values instead of relying on it.
-- Use the documented sample challenge identifier and action contract in
-  [game-actions.md](contracts/game-actions.md).
+- Request the predefined challenge without an identifier and use its returned identifier to start
+  an attempt, as described in the [action contract](contracts/game-actions.md).
 
 ## Automated verification
 
@@ -48,6 +48,10 @@ Exercise the action/service boundary through the integration tests, in one serve
    and guesses after completion. Confirm errors and that no attempt state changes on rejection.
 5. Simulate loss of process-local attempt data; retrieval must report unavailable and allow a new
    attempt. Do not interpret this check as a multi-instance durability guarantee.
+6. Exercise an unavailable challenge associated with an attempt and competing error conditions;
+   verify challenge unavailability takes precedence over stale, completed, and unknown-stop outcomes.
+7. Inject a technical failure before a guess commits and verify the full attempt remains unchanged.
+   Simulate a lost response after commit and verify the client retrieves progress before any retry.
 
 Run directed graph and concurrency edge cases listed in [research.md](research.md); exercise
 tests with isolated fixture stores rather than relying on execution order or shared state.

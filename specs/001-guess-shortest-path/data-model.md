@@ -34,12 +34,15 @@
    from the pre-guess state; append a record and increment revision for every known guess. If
    connected, append the stop and update current stop. If terminal is reached, complete and attach
    the result; otherwise remain active. An unconnected guess leaves the route and current stop as-is.
-3. A stale revision, unknown stop, malformed input, unavailable attempt or completed attempt
+3. A stale revision, unknown stop, malformed input, unavailable attempt or challenge, or completed attempt
    changes no state. A stale result includes the latest public attempt snapshot.
 4. Compare revision and apply the full transition atomically within one process: no asynchronous
    gap between comparison and update. This does not provide cross-instance consistency.
    Guards return explicit business failure Results before any mutation; unexpected technical
-   failures are exceptions handled at an appropriate boundary without exposing sensitive details.
+    failures are exceptions handled at an appropriate boundary without exposing sensitive details.
+    A transition commits in full or leaves the entire attempt unchanged, including when an unexpected
+    technical failure occurs before commit. If a guess response is not definitive, the client retrieves
+    the latest progress before deciding whether to retry and uses its revision for any retry.
 
 The repository holds attempts in process memory only; restart, eviction or a different instance
 may make an attempt unavailable. There is no defined expiry duration or persistence guarantee.
