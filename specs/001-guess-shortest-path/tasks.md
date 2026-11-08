@@ -11,7 +11,7 @@ description: "Implementation tasks for Guess the Shortest Path"
 
 - [ ] T001 Add Zod, Sentry, Husky and Playwright dependencies and required scripts to `package.json` and update `bun.lock`; retain Bun 1.4.4 and existing Oxlint/Oxfmt scripts.
 - [ ] T002 [P] Document placeholder `SENTRY_DSN` as required in production and optional locally/tests in `.env.example`, and explicitly unignore only that example in `.gitignore`.
-- [ ] T003 After T001, configure Husky pre-commit checks in `.husky/pre-commit` and `package.json` and full Bun, typecheck, Oxlint, Oxfmt, build and constitution-required Playwright gates in `.github/workflows/ci.yml`; run an existing Playwright suite if available, add no feature UI or feature-specific E2E test, and record the Playwright gate as unresolved if no suite exists rather than reporting it as passed.
+- [ ] T003 After T001, configure Husky pre-commit checks for TypeScript typechecking, Oxlint and Oxfmt in `.husky/pre-commit` and `package.json`; block commits if any check fails. Configure Bun unit/integration, typecheck, Oxlint, Oxfmt and build gates in `.github/workflows/ci.yml`. Configure CI to detect and run the existing Playwright E2E suite whenever one exists, propagating test, setup and discovery failures as failures; only when no E2E suite exists and this change introduces or modifies no user-facing flow, report the Playwright gate as not applicable, never passed. Retain Playwright and add no E2E tests or UI for this server-only feature.
 
 ## Phase 2: Foundational prerequisites
 
@@ -84,20 +84,20 @@ description: "Implementation tasks for Guess the Shortest Path"
 
 ## Phase 6: Polish & cross-cutting concerns
 
-- [ ] T027 [P] Update `specs/001-guess-shortest-path/quickstart.md` with actual action imports, commands, ephemeral storage/access limitations and the retrieve-before-retry rule if implementation differs from the design.
-- [ ] T028 Run the complete acceptance checklist in `specs/001-guess-shortest-path/quickstart.md` and the Bun, typecheck, lint, format, build and constitution-required Playwright gates from `package.json`; fix failures in the relevant files and record an absent Playwright suite as an unresolved gate, not a pass, without adding a feature UI or feature-specific E2E test.
+- [ ] T027 Update `specs/001-guess-shortest-path/quickstart.md` with instructions to verify whether an E2E suite exists, run the existing Playwright suite when present, and record the gate as not applicable (never passed) only when no E2E suite exists and no user-facing flow is introduced or modified. Preserve the other required gates and update action imports, commands, ephemeral storage/access limitations and the retrieve-before-retry rule if implementation differs from the design.
+- [ ] T028 After T027, run the complete acceptance checklist in `specs/001-guess-shortest-path/quickstart.md` and the Bun unit/integration, typecheck, lint, format and build gates from `package.json`; fix failures in the relevant files. Verify E2E suite existence using the project's Playwright configuration and test discovery: run any existing suite and report its actual result; only if no E2E suite exists and this change introduces or modifies no user-facing flow, record the Playwright gate as not applicable, never passed. Treat discovery errors as failures, not evidence of absence; add no E2E tests or UI for this feature.
 - [ ] T029 Review `src/features/shortest-path/`, `src/config/server-env.ts` and `.github/workflows/ci.yml` against `.specify/memory/constitution.md`, especially separate type files, no `any`, Sentry sanitization and no routes, frontend or persistence.
 
 ## Dependencies & execution order
 
-Phase 1 → Phase 2 → US1 → US2 → US3 → Polish. US1 and US2 both have P1 priority; US2 needs US1's network and analysis, and US3 extends their service/action behavior. US3 tests can be authored after the foundational contracts, but integration implementation depends on US2. T003 requires T001; T005 requires T001 and T004; T007 requires T001 and T006; T008 requires T005. Author each story's tests, run them and confirm they fail for the expected missing behavior before starting that story's implementation; independent implementation tasks may then run in parallel. No feature-specific frontend E2E test is required.
+Phase 1 → Phase 2 → US1 → US2 → US3 → Polish. US1 and US2 both have P1 priority; US2 needs US1's network and analysis, and US3 extends their service/action behavior. US3 tests can be authored after the foundational contracts, but integration implementation depends on US2. T003 requires T001; T005 requires T001 and T004; T007 requires T001 and T006; T008 requires T005; T028 requires T027. Author each story's tests, run them and confirm they fail for the expected missing behavior before starting that story's implementation; independent implementation tasks may then run in parallel. No E2E tests are added for this server-only feature, but existing Playwright suites remain mandatory.
 
 ### Parallel examples
 
 - **US1**: After the foundation, author T009 and T010 in parallel and confirm the expected failures; then T011 → T012 and T013 (parallel after T011) → T014.
 - **US2**: After US1, author T015, T016 and T017 in parallel and confirm the expected failures; then T018 → T019 and T020 (parallel after T018) → T021 → T022.
 - **US3**: After the foundation, author T023 and T024 in parallel; after US2, confirm the expected failures, then implement T025 followed by T026 and rerun both suites.
-- T002 can run alongside T001; T004 and T006 can run in parallel after setup; T027 can run alongside other final verification work provided it does not edit the same files.
+- T002 can run alongside T001; T004 and T006 can run in parallel after setup; T027 can run alongside T029, but must precede T028.
 
 ## Implementation strategy
 
