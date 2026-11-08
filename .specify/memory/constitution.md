@@ -28,15 +28,20 @@ invariants explicit.
 
 Features and behavior changes MUST include unit tests for relevant logic and integration tests for
 interactions across boundaries, using Bun's test runner. Bug fixes MUST include a regression test.
-User-facing flows MUST be covered by end-to-end tests using Playwright. Tests MUST be maintained
-alongside the behavior they cover. This makes isolated rules and cross-component behavior verifiable.
+Playwright MUST remain part of the project testing stack, and user-facing flows MUST be covered by
+Playwright end-to-end tests. Tests MUST be maintained alongside the behavior they cover. This makes
+isolated rules and cross-component behavior verifiable.
 
 ### V. Automated Quality Gates
 
 Code MUST pass Oxlint, Oxfmt checks, TypeScript type checking, and the relevant Bun tests. Husky
 pre-commit hooks MUST run the configured pre-commit checks; the full quality gates MUST also be
-checked before changes are merged. GitHub Actions MUST run the full quality gates, including
-Playwright end-to-end tests, in CI. Automation provides consistent feedback without replacing review.
+checked before changes are merged. GitHub Actions MUST run all applicable quality gates in CI and
+MUST run the existing Playwright end-to-end suite whenever one exists. When no end-to-end suite
+exists and a change does not introduce or modify a user-facing flow, the Playwright end-to-end gate
+MAY be marked not applicable; it MUST NOT be reported as passed. This exception does not waive unit,
+integration, or other applicable quality gates. Automation provides consistent feedback without
+replacing review.
 
 ### VI. Explicit Outcomes and Guard-First Control Flow
 
@@ -67,7 +72,7 @@ readable without compromising correctness.
 
 - Feature work MUST respect backend slice boundaries and include the required tests.
 - Contributors MUST run the applicable quality gates and address failures before requesting review.
-- GitHub Actions CI MUST pass the full quality gates before changes are merged.
+- GitHub Actions CI MUST pass all applicable quality gates before changes are merged.
 - Reviewers MUST check compliance with the constitution and verify that tests cover changed behavior.
 - Any necessary exception MUST be documented with its rationale and approved in the change review.
 
@@ -83,4 +88,4 @@ require a MAJOR increment; new principles, sections, or materially expanded guid
 increment; clarifications and other non-semantic changes require a PATCH increment. The ratification
 date records initial adoption, and the last-amended date changes whenever this document is amended.
 
-**Version**: 1.3.0 | **Ratified**: 2026-11-05 | **Last Amended**: 2026-11-08
+**Version**: 1.4.0 | **Ratified**: 2026-11-05 | **Last Amended**: 2026-11-08
