@@ -1,11 +1,3 @@
-<!--
-Sync Impact Report (remove before committing)
-Version: 1.2.0 → 1.3.0
-Modified principles: None
-Added sections: VI. Explicit Outcomes and Guard-First Control Flow
-Removed sections: None
-Follow-up TODOs: None
--->
 # Shalinle Constitution
 
 ## Core Principles
